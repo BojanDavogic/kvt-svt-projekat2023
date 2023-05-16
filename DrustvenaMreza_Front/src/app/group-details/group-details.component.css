@@ -1,0 +1,25 @@
+.container {
+    width: 800px;
+    height: 100vh;
+    margin: auto;
+    text-align: center;
+    border-radius: 10px;
+    background-color: white;
+    border: 4px solid #0e98dc;
+}
+
+.group-header {
+    background-color: #001621;
+    margin: 6px;
+    padding-bottom: 10px;
+}
+
+.group-name {
+    margin-bottom: 20px;
+}
+
+.group-description {
+    border-bottom: 2px solid #0e98dc;
+    padding-bottom: 10px;
+}
+

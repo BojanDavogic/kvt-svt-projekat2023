@@ -1,0 +1,46 @@
+package ftn.drustvenamreza_back.model.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
+public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String text;
+
+    @Column(nullable = false)
+    private LocalDate timestamp;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentComment")
+    private List<Comment> replies;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
+    public void addReply(Comment reply) {
+        reply.setParentComment(this);
+        replies.add(reply);
+    }
+
+    public void removeReply(Comment reply) {
+        reply.setParentComment(null);
+        replies.remove(reply);
+    }
+}

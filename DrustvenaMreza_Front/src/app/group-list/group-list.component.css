@@ -1,0 +1,68 @@
+/* group-list.component.css */
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 30px;
+  }
+  
+  .group-card {
+    width: 300px;
+    height: 100px;
+    padding: 10px;
+    background-color: #000000;
+    border-radius: 8px;
+    margin: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .group-card div {
+    width: 100%;
+    height: 100%;
+  }
+
+  .group-card a {
+    text-decoration: none;
+  }
+  
+  .group-card:hover {
+    box-shadow: 0 4px 8px rgba(84, 191, 255, 0.2);
+    cursor: pointer;
+  }
+  
+  .group-name {
+    color: azure;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .group-description {
+    font-size: 16px;
+    color: #b2b2b2;
+  }
+  
+  .group-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .group-actions {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .add-group-button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-group-button:hover {
+    background-color: #2980b9;
+  }
