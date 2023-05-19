@@ -28,4 +28,12 @@ public class FriendRequest {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "from_user_id")
+    private User fromUser;
+
+    @ManyToOne
+    @JoinColumn(name = "to_user_id")
+    private User toUser;
 }

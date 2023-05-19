@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -25,11 +27,23 @@ public class Post {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "posted_by_id")
+    private User postedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "group_id")
     private Group group;
+
+//    @OneToMany(mappedBy = "post")
+//    private List<Image> images;
+//
+//    @OneToMany(mappedBy = "post")
+//    private List<Report> reports;
+//
+//    @OneToMany(mappedBy = "post")
+//    private List<Reaction> reactions;
+//
+//    @OneToMany(mappedBy = "post")
+//    private List<Comment> comments = new ArrayList<>();
 }

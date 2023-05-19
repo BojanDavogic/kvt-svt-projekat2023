@@ -24,6 +24,10 @@ public class Comment {
     @Column(nullable = false)
     private LocalDate timestamp;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentComment")
     private List<Comment> replies;
 
@@ -34,13 +38,25 @@ public class Comment {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @OneToMany(mappedBy = "comment")
+    private List<Report> reports;
+
+    @OneToMany(mappedBy = "comment")
+    private List<Reaction> reactions;
+
     public void addReply(Comment reply) {
         reply.setParentComment(this);
         replies.add(reply);
+        reply.setPost(this.getPost());
     }
 
     public void removeReply(Comment reply) {
         reply.setParentComment(null);
         replies.remove(reply);
+        reply.setPost(null);
     }
 }

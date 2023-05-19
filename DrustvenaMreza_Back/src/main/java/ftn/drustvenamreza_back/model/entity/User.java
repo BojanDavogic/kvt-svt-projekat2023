@@ -35,7 +35,49 @@ public class User {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+//
+//    @OneToMany(mappedBy = "postedBy")
+//    private List<Post> posts;
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<Comment> comments;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Post> posts;
+    @ManyToMany
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private List<User> friends;
+
+    public String getDtype() {
+        if (this instanceof Administrator) {
+            return "Administrator";
+        } else if (this instanceof User) {
+            return "User";
+        } else {
+            return "";
+        }
+    }
+
+//    @OneToMany(mappedBy = "fromUser")
+//    private List<FriendRequest> sentFriendRequests;
+//
+//    @OneToMany(mappedBy = "toUser")
+//    private List<FriendRequest> receivedFriendRequests;
+
+//    @OneToMany(mappedBy = "user")
+//    private List<Banned> bannedList;
+//
+//    @OneToMany(mappedBy = "createdBy")
+//    private List<GroupRequest> groupRequests;
+//
+//    @OneToOne(mappedBy = "user")
+//    private Image image;
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<Report> reports;
+//
+//    @OneToMany(mappedBy = "madeBy")
+//    private List<Reaction> reactions;
 }

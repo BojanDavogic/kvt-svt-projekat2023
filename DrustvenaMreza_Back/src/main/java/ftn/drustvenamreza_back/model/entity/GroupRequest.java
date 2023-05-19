@@ -27,4 +27,12 @@ public class GroupRequest {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 }

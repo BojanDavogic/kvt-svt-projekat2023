@@ -19,4 +19,12 @@ public class Image {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

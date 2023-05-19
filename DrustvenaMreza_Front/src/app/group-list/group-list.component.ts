@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Group } from '../model/group.model';
 import { GroupService } from '../services/group.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-group-list',
   templateUrl: './group-list.component.html',
-  styleUrls: ['./group-list.component.css']
+  styleUrls: ['./group-list.component.css'],
+  providers: [DatePipe]
 })
 export class GroupListComponent implements OnInit {
   groups: Group[] = [];
@@ -19,6 +21,7 @@ export class GroupListComponent implements OnInit {
   loadGroups() {
     this.groupService.getAllGroups().subscribe(groups => {
       this.groups = groups;
+      console.log(this.groups);
     });
   }
 

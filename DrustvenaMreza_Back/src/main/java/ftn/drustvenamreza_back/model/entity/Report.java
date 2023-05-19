@@ -22,13 +22,21 @@ public class Report {
     @Column(nullable = false)
     private LocalDate timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User byUser;
-
     @Column(nullable = false)
     private Boolean accepted;
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -21,4 +22,20 @@ public class Banned {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "administrator_id")
+    private Administrator bannedByAdmin;
+
+    @ManyToOne
+    @JoinColumn(name = "group_admin_id")
+    private GroupAdmin bannedByGroupAdmin;
 }

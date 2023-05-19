@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import { DatePipe } from "@angular/common";
 
 export interface Group {
   id?: any;

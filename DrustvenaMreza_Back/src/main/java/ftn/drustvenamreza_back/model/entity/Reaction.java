@@ -24,4 +24,16 @@ public class Reaction {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User madeBy;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 }

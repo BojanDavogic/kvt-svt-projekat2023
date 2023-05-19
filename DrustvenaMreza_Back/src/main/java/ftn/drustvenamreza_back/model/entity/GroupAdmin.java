@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "group_admin")
 @NoArgsConstructor
@@ -17,13 +19,16 @@ public class GroupAdmin {
     Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @JoinColumn(name = "group_id")
     private Group group;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "bannedByGroupAdmin")
+    private List<Banned> bannedList;
 }
