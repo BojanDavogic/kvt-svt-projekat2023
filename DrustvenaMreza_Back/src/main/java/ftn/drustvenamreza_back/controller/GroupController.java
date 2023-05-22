@@ -3,6 +3,7 @@ package ftn.drustvenamreza_back.controller;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.service.implementation.GroupServiceImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/{groupId}")
     public ResponseEntity<Group> getGroupById(@PathVariable Long groupId) {
         Group group = groupService.getGroupById(groupId);

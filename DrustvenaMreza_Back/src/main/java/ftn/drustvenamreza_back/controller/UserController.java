@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.controller;
 
+import ftn.drustvenamreza_back.model.dto.ChangePasswordDTO;
 import ftn.drustvenamreza_back.model.dto.UserDTO;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.security.TokenUtils;
@@ -8,6 +9,7 @@ import ftn.drustvenamreza_back.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +37,11 @@ public class UserController {
     @Autowired
     TokenUtils tokenUtils;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-    public UserController(UserServiceImpl userService) {
+
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -55,6 +61,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("")
     public ResponseEntity<User> createUser(@RequestBody UserDTO user) {
         User createdUser = userService.createUser(user);
@@ -85,17 +92,27 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDTO userDto) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
-            return ResponseEntity.ok(tokenUtils.generateToken(userDetails));
-        } catch (UsernameNotFoundException e) {
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDto) {
+        User user = userService.getUserById(id);
+        if (user == null) {
             return ResponseEntity.notFound().build();
         }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        if (!currentUsername.equals(user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Nemate pravo da menjate lozinku za ovog korisnika");
+        }
+
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Trenutna lozinka nije ispravna");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userService.updateUser(user);
+
+        return ResponseEntity.ok("Lozinka je uspešno promenjena");
     }
 }
