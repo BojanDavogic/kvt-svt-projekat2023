@@ -9,14 +9,15 @@
         </div>
       </a>
       <div class="group-edit-delete">
-        <button class="edit-group-button">Izmeni</button>
+        <button class="edit-group-button" (click)="openEditPopup(group)">Izmeni</button>
         <button class="delete-group-button">Obrisi</button>
       </div>
     </div>
   </div>
   <div class="group-actions">
     <button class="add-group-button" (click)="openPopup()">Dodaj novu grupu</button>
-  </div>
+  </div> 
+  <app-edit-group-popup [group]="this.group" *ngIf="showEditPopup" (popupEditClosed)="closeEditPopup()"/> 
   <app-new-group-popup
   *ngIf="showPopup"
   (groupAdded)="addGroup($event)"

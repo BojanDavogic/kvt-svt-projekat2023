@@ -1,0 +1,84 @@
+  h1 {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .registration-form {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    color: black;
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .register-button,
+  .clear-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .register-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .clear-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .toLogin {
+    text-align: center;
+  }
+  
+  .toLogin button {
+    cursor: pointer;
+    color: gold;
+    background-color: rgb(3, 41, 64);
+    border: 2px solid gold;
+    border-radius: 6px;
+    margin-top: 6px;
+  }
+
+  .success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #00cf29;
+    padding: 20px;
+    border: 1px solid #161716;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .success-popup h4, .success-popup p {
+    color: black;
+  }

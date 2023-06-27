@@ -21,8 +21,8 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private LocalDateTime creationDate;
+    @Column(nullable = true)
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Boolean isDeleted = false;

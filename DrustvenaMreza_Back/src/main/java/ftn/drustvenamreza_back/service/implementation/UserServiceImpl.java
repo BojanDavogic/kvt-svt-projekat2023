@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    public User createUser(UserDTO userDTO) {
+    public User createUser(User userDTO) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(userDTO.getUsername()));
 
         if(user.isPresent()){

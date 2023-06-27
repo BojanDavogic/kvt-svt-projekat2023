@@ -6,7 +6,7 @@ import ftn.drustvenamreza_back.model.entity.User;
 import java.util.List;
 
 public interface UserService {
-    User createUser(UserDTO userDTO);
+    User createUser(User user);
 
     List<User> getAllUsers();
 

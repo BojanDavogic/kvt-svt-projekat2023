@@ -21,6 +21,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public Group createGroup(Group group) {
+        group.setCreationDate(LocalDateTime.now());
         return groupRepository.save(group);
     }
 

@@ -1,15 +1,28 @@
 <h1>Prijava korisnika</h1>
 <div class="login-form">
-  <div class="form-group">
-    <label for="email">Email adresa:</label>
-    <input type="text" id="email" [(ngModel)]="email" />
-  </div>
-  <div class="form-group">
-    <label for="password">Lozinka:</label>
-    <input type="password" id="password" [(ngModel)]="password" />
-  </div>
-  <div class="button-group">
-    <button class="login-button" (click)="login()">Prijavi se</button>
-    <button class="clear-button" (click)="clear()">Obriši</button>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-group">
+      <label for="username">Korisničko ime:</label>
+      <input type="text" id="username" [formControl]="username" />
+      <div *ngIf="username.hasError('required') && username.touched" class="error-message">
+        Unesite korisničko ime
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Lozinka:</label>
+      <input type="password" id="password" [formControl]="password" />
+      <div *ngIf="password.hasError('required') && password.touched" class="error-message">
+        Unesite lozinku
+      </div>
+    </div>
+    <div class="button-group">
+      <button class="login-button" routerLink="/login" type="submit" [disabled]="form.invalid">Prijavi se</button>
+      <button class="clear-button" type="button" (click)="clear()">Obriši</button>
+    </div>
+  </form>
+  <div class="zaRegistraciju">
+    <p>Nemaš nalog?</p>
+    <button routerLink="/register">Registruj se</button>
   </div>
 </div>
+

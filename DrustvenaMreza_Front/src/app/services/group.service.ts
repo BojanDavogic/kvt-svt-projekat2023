@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Group } from '../model/group.model';
 import { Observable } from 'rxjs';
 import { HttpBackend } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,28 +12,39 @@ import { HttpBackend } from '@angular/common/http';
 export class GroupService {
   private apiUrl = environment.baseUrl + '/groups';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   getGroupById(groupId: number): Observable<Group> {
     const url = `${this.apiUrl}/${groupId}`;
-    return this.http.get<Group>(url);
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.get<Group>(url, { headers });
   }
+  
 
   createGroup(group: Group): Observable<Group> {
-    return this.http.post<Group>(this.apiUrl, group);
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.post<Group>(this.apiUrl, group, { headers });
   }
+  
 
   updateGroup(groupId: number, group: Group): Observable<Group> {
     const url = `${this.apiUrl}/${groupId}`;
-    return this.http.put<Group>(url, group);
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.put<Group>(url, group, { headers });
   }
+  
 
   deleteGroup(groupId: number): Observable<void> {
     const url = `${this.apiUrl}/${groupId}`;
-    return this.http.delete<void>(url);
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.delete<void>(url, { headers });
   }
+  
 
   getAllGroups(): Observable<Group[]> {
-    return this.http.get<Group[]>(this.apiUrl);
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.get<Group[]>(this.apiUrl, { headers, responseType: 'json' });
   }
+  
+  
 }

@@ -1,1 +1,39 @@
-<p>registration works!</p>
+<h1>Registracija korisnika</h1>
+<div class="registration-form">
+  <div class="form-group">
+    <label for="firstname">Ime:</label>
+    <input type="text" id="firstname" name="firstname" [(ngModel)]="firstname" />
+  </div>
+  <div class="form-group">
+    <label for="lastname">Prezime:</label>
+    <input type="text" id="lastname" name="lastname" [(ngModel)]="lastname" />
+  </div>
+  <div class="form-group">
+    <label for="username">Korisničko ime:</label>
+    <input type="text" id="username" name="username" [(ngModel)]="username" />
+  </div>
+  <div class="form-group">
+    <label for="email">Email adresa:</label>
+    <input type="text" id="email" name="email" [(ngModel)]="email" />
+  </div>
+  <div class="form-group">
+    <label for="password">Lozinka:</label>
+    <input type="password" id="password" name="password" [(ngModel)]="password" />
+  </div>
+  <div class="form-group">
+    <label for="confirmPassword">Ponovljena lozinka:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" />
+  </div>
+  <div class="button-group">
+    <button class="register-button" (click)="register()">Registruj se</button>
+    <button class="clear-button" (click)="clear()">Obriši</button>
+  </div>
+  <div class="toLogin">
+    <p>Već imaš nalog?</p>
+    <button routerLink="/login">Prijavi se</button>
+  </div>
+</div>
+<div *ngIf="showSuccess" class="success-popup" [@fadeInOut]>
+  <h4>Uspešna registracija!</h4>
+  <p>Hvala vam što ste se registrovali.</p>
+</div>

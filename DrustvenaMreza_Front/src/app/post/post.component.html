@@ -1,0 +1,25 @@
+<div *ngFor="let post of posts" class="post">
+    <div class="post-header">
+      <h2>{{ post.author }}</h2>
+      <p>{{ post.createdAt | date:'medium' }}</p>
+    </div>
+    <div class="post-content">
+      <p>{{ post.content }}</p>
+    </div>
+    <div class="post-actions">
+      <button (click)="reactToPost(post.id, 'like')">Like</button>
+      <button (click)="reactToPost(post.id, 'dislike')">Dislike</button>
+      <button (click)="reactToPost(post.id, 'heart')">Heart</button>
+      <button (click)="openComments(post.id)">Comments</button>
+    </div>
+    <div class="comments" *ngIf="post.showComments">
+      <div *ngFor="let comment of post.comments" class="comment">
+        <p>{{ comment.author }}</p>
+        <p>{{ comment.content }}</p>
+      </div>
+      <form (submit)="addComment(post.id, commentInput.value)">
+        <input type="text" placeholder="Write a comment" #commentInput>
+        <button type="submit">Add Comment</button>
+      </form>
+    </div>
+  </div>

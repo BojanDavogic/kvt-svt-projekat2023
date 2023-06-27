@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 })
 export class GroupListComponent implements OnInit {
   groups: Group[] = [];
+  group: any;
 
   constructor(private groupService: GroupService) { }
 
@@ -19,11 +20,18 @@ export class GroupListComponent implements OnInit {
   }
 
   loadGroups() {
-    this.groupService.getAllGroups().subscribe(groups => {
-      this.groups = groups;
-      console.log(this.groups);
-    });
+    this.groupService.getAllGroups().subscribe(
+      groups => {
+        this.groups = groups;
+        console.log(this.groups);
+      },
+      error => {
+        console.error('Greška prilikom preuzimanja grupa:', error);
+      }
+    );
   }
+  
+  
 
   deleteGroup(groupId: number) {
     this.groupService.deleteGroup(groupId).subscribe(() => {
@@ -42,11 +50,25 @@ export class GroupListComponent implements OnInit {
 
   }
 
+  showEditPopup: boolean = false;
+  editGroup(){
+
+  }
+
+  openEditPopup(group: any) {
+    this.showEditPopup = true;
+    this.group = group;
+  }
+
   openPopup() {
     this.showPopup = true;
   }
   
   closePopup() {
     this.showPopup = false;
+  }
+
+  closeEditPopup() {
+    this.showEditPopup = false;
   }
 }

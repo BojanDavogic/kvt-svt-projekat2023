@@ -27,14 +27,14 @@ public class Group {
     @Column(nullable = false)
     private String description;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
-    @Column(nullable = false)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy.")
+    @Column(nullable = true)
     private LocalDateTime creationDate;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean isSuspended;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String suspendedReason;
 
     @Column(nullable = false)
