@@ -1,25 +1,43 @@
+<div class="post-card">
+  <div class="post-header">
+    <h2>Novi post</h2>
+  </div>
+  <div class="post-content">
+    <textarea [(ngModel)]="newPostContent" placeholder="Napišite novi post"></textarea>
+  </div>
+  <div class="post-actions">
+    <button (click)="createPost()">Objavi</button>
+  </div>
+</div>
 <div *ngFor="let post of posts" class="post">
     <div class="post-header">
-      <h2>{{ post.author }}</h2>
-      <p>{{ post.createdAt | date:'medium' }}</p>
+      <h2>{{ post.postedBy?.username }}</h2>
+      <p>{{ post.creationDate }}</p>
+      <button id="btnIzmeni" *ngIf="!post.isEditing && !post.isUpdating" (click)="startEditing(post)">Izmeni</button>
+      <button id="btnObrisi" *ngIf="!post.isEditing && !post.isUpdating" (click)="deletePost(post.id)">Obrisi</button>
+      <button id="btnOtkazi" *ngIf="post.isEditing && !post.isUpdating" (click)="cancelEditing(post)">Otkaži</button>
+      <button id="btnPotvrdi" *ngIf="post.isEditing && !post.isUpdating" (click)="updatePost(post.id, post)">Potvrdi</button>
     </div>
     <div class="post-content">
-      <p>{{ post.content }}</p>
+      <p id="content" *ngIf="!post.isEditing">{{ post.content }}</p>
+      <textarea style="resize: none;" id="editText" *ngIf="post.isEditing" [(ngModel)]="post.updatedContent"></textarea>
     </div>
     <div class="post-actions">
       <button (click)="reactToPost(post.id, 'like')">Like</button>
       <button (click)="reactToPost(post.id, 'dislike')">Dislike</button>
       <button (click)="reactToPost(post.id, 'heart')">Heart</button>
-      <button (click)="openComments(post.id)">Comments</button>
+      <button (click)="openComments(post)">Comments</button>
     </div>
     <div class="comments" *ngIf="post.showComments">
-      <div *ngFor="let comment of post.comments" class="comment">
-        <p>{{ comment.author }}</p>
-        <p>{{ comment.content }}</p>
+      <div class="comment" *ngFor="let comment of post.comments">
+        <p>{{ comment.user?.username }}</p>
+        <p>{{ comment.text }}</p>
+        <p id="commentTimestamp">{{ comment.timestamp }}</p>
+        <hr>
       </div>
-      <form (submit)="addComment(post.id, commentInput.value)">
-        <input type="text" placeholder="Write a comment" #commentInput>
-        <button type="submit">Add Comment</button>
+      <form (submit)="addComment(post.id, commentInput)">
+        <input id="commentInput" type="text" placeholder="Write a comment" name="commentInput" [(ngModel)]="commentInput">
+        <button id="btnAddComment" type="submit">Add Comment</button>
       </form>
     </div>
   </div>

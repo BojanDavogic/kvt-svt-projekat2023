@@ -1,6 +1,8 @@
 package ftn.drustvenamreza_back.model.entity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,12 +20,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column
+    private String description = "";
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)
     private String email;
-
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm:ss")
     @Column(nullable = true)
     private LocalDateTime lastLogin;
 
@@ -43,6 +48,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
     private List<User> friends;
+
+    public User(String username) {
+    }
+
+    public User(String trim, String trim1, List<GrantedAuthority> grantedAuthorities) {
+    }
 
     public String getDtype() {
         if (this instanceof Administrator) {

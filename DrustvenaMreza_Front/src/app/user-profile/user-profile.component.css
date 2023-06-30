@@ -1,0 +1,93 @@
+.user-profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .user-profile-card {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .user-profile-image {
+    flex: 0 0 200px;
+  }
+  
+  .user-profile-image img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .user-profile-image button, .button-group button {
+    color: black;
+  }
+  
+  .user-profile-details {
+    flex: 1;
+    padding-left: 20px;
+  }
+  
+  .user-profile-details div {
+    margin-bottom: 10px;
+  }
+
+  .user-profile-details div label {
+    width: 200px;
+    font-size: 18px;
+    display: inline-block;
+    font-weight: bold;
+  }
+
+  .user-profile-details div input, .user-profile-details div textarea {
+    color: white;
+    width: 400px;
+    height: 20px;
+    border: 2px solid white;
+    margin-bottom: 6px;
+    margin-top: 4px;
+    margin-right: 10px;
+    padding-top: 8px;
+    padding-left: 2px;
+  }
+
+  .user-profile-details div input:enabled {
+    color: black;
+  }
+
+  .user-profile-details div textarea {
+    height: 50px;
+  }
+
+  .user-profile-details div textarea:enabled {
+    color: black;
+  }
+  
+  .user-profile-details div button {
+    color: black;
+  }
+  
+  .user-profile-details input[type="text"],
+  .user-profile-details input[type="password"],
+  .user-profile-details textarea {
+    width: 300px;
+  }
+  
+  .button-group {
+    margin-top: 20px;
+  }
+
+  .button-group button:first-child {
+    margin-right: 10px;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+
+  .success-message {
+    color: green;
+    margin-top: 10px;
+  }
+  

@@ -19,18 +19,12 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
 
-    /*
-    @Autowired
-    public UserDetailsServiceImpl(UserService userService){
-        this.userService = userService;
-    }
-*/
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userService.getUserByUsername(username);
+        ftn.drustvenamreza_back.model.entity.User user = userService.getUserByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("There is no user with username " + username);
@@ -43,6 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             } else if ("User".equals(dtype)) {
                 grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             } else {
+                // Dodajte kod za obradu drugih tipova korisnika ako je potrebno
             }
 
             return new org.springframework.security.core.userdetails.User(
@@ -52,3 +47,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 }
+

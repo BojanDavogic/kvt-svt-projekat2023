@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './services/auth.service';
@@ -20,5 +20,12 @@ export class AppComponent {
     this.router.navigate(['login']);
   }
 
-  ngOnInit() {}
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler(event: Event) {
+    localStorage.removeItem('token');
+  }
+
+  ngOnInit() {
+    this.authService.getCurrentUser();
+  }
 }

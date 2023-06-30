@@ -2,6 +2,7 @@ package ftn.drustvenamreza_back.controller;
 
 import ftn.drustvenamreza_back.model.dto.LoginDTO;
 import ftn.drustvenamreza_back.model.dto.TokenResponseDTO;
+import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.security.TokenUtils;
 import ftn.drustvenamreza_back.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @RestController
@@ -53,7 +55,11 @@ public class LoginController {
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
 
+        userService.updateLastLogin(user, LocalDateTime.now());
+        userService.updateUser(user);
         String accessToken = tokenUtils.generateToken(userDetails);
         Date expiresIn = tokenUtils.getExpirationDateFromToken(accessToken);
         return new ResponseEntity<>(new TokenResponseDTO(accessToken, expiresIn), HttpStatus.OK);

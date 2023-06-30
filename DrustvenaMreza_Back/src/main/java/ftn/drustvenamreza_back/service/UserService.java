@@ -1,8 +1,9 @@
 package ftn.drustvenamreza_back.service;
 
-import ftn.drustvenamreza_back.model.dto.UserDTO;
 import ftn.drustvenamreza_back.model.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserService {
@@ -19,4 +20,6 @@ public interface UserService {
     void updateUser(User updatedUser);
 
     void deleteUser(Long userId);
+
+    void updateLastLogin(User user, LocalDateTime lastLogin);
 }

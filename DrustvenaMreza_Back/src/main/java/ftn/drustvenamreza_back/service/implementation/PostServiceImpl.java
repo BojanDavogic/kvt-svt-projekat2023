@@ -1,44 +1,64 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.model.entity.Comment;
 import ftn.drustvenamreza_back.model.entity.Post;
 import ftn.drustvenamreza_back.model.entity.User;
+import ftn.drustvenamreza_back.repository.CommentRepository;
 import ftn.drustvenamreza_back.repository.PostRepository;
+import ftn.drustvenamreza_back.service.PostService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 @Service
-public class PostServiceImpl {
+public class PostServiceImpl implements PostService {
+    private static final int MAX_CONTENT_LENGTH = 255;
     private final PostRepository postRepository;
+    private final UserServiceImpl userService;
+    private final CommentRepository commentRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.userService = userService;
+        this.commentRepository = commentRepository;
     }
 
-    public Post createPost(String content, User postedBy) {
-        Post post = new Post();
-        post.setContent(content);
+    public Post createPost(Post post, User user) {
+        if (user == null) {
+            user = userService.getCurrentUser();
+        }
         post.setCreationDate(LocalDateTime.now());
-        post.setIsDeleted(false);
-        post.setPostedBy(postedBy);
+        post.setPostedBy(user);
         return postRepository.save(post);
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<Post> getAllPostsWithoutGroup() {
+        return postRepository.findByGroupIdIsNullAndIsDeletedFalse();
+    }
+
+    @Override
+    public List<Post> getAllPostsWithGroup(Long groupId) {
+        return postRepository.findByGroupIdAndIsDeletedFalse(groupId);
     }
 
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElse(null);
     }
 
-    public void updatePost(Long postId, String updatedContent) {
+    public void updatePost(Long postId, String updatedContent, User user) {
         Post existingPost = getPostById(postId);
         if (existingPost != null) {
+            if (updatedContent.length() > MAX_CONTENT_LENGTH) {
+                throw new IllegalArgumentException("Duzina sadržaja prelazi maksimalnu duzinu.");
+            }
             existingPost.setContent(updatedContent);
+            existingPost.setPostedBy(user);
             postRepository.save(existingPost);
         }
     }
+
 
     public void deletePost(Long postId) {
         Post post = getPostById(postId);

@@ -17,8 +17,10 @@ export class EditGroupPopupComponent {
 
   @Input() group: any;
 
-  // @Output() groupAdded = new EventEmitter<Group>();
-  @Output() popupClosed = new EventEmitter();
+  @Output() groupEdited = new EventEmitter();
+  @Output() popupEditClosed = new EventEmitter();
+
+  showEditPopup: boolean = false;
 
   constructor(private route: ActivatedRoute, private groupService: GroupService) { }
 
@@ -27,9 +29,9 @@ export class EditGroupPopupComponent {
       (response) => {
         console.log('Grupa uspešno izmenjena:', response);
         // Emitujte događaj da je grupa izmenjena
-        // this.groupAdded.emit(response);
+        // this.groupEdited.emit(response);
         // Zatvorite popup
-        this.closePopup();
+        this.closeEditPopup();
       },
       (error) => {
         console.error('Greška prilikom izmene grupe:', error);
@@ -37,7 +39,8 @@ export class EditGroupPopupComponent {
     );
   }
 
-  closePopup() {
-    this.popupClosed.emit();
+  closeEditPopup() {
+    this.popupEditClosed.emit();
+
   }
 }

@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +21,11 @@ public class Comment {
 
     @Column(nullable = false)
     private String text;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm")
+    @Column()
+    private LocalDateTime timestamp;
 
-    @Column(nullable = false)
-    private LocalDate timestamp;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

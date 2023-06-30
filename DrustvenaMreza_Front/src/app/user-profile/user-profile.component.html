@@ -1,0 +1,59 @@
+<div class="user-profile-container">
+  <h2>Korisnički podaci</h2>
+
+  <div class="user-profile-card">
+    <div class="user-profile-image">
+      <img [src]="" alt="Profilna slika korisnika" />
+      <button (click)="editImage()" *ngIf="!isEditingImage">Izmeni sliku</button>
+      <input type="file" (change)="handleImageChange($event)" *ngIf="isEditingImage" accept="image/*" />
+    </div>
+
+    <div class="user-profile-details">
+      <div>
+        <label for="username">Korisničko ime:</label>
+        <input type="text" id="username" [(ngModel)]="user.username" [readonly]="!isEditingField('username')" />
+      </div>
+
+      <div>
+        <label for="password">Lozinka:</label>
+        <input type="password" id="password" [(ngModel)]="user.password" [readonly]="!isEditingField('password')" />
+        <button (click)="editField('password')" *ngIf="!isEditingField('password')">Izmeni</button>
+      </div>
+
+      <div>
+        <label for="firstName">Ime:</label>
+        <input type="text" id="firstName" [(ngModel)]="user.firstName" [readonly]="!isEditingField('firstName')" />
+        <button (click)="editField('firstName')" *ngIf="!isEditingField('firstName')">Izmeni</button>
+      </div>
+
+      <div>
+        <label for="lastName">Prezime:</label>
+        <input type="text" id="lastName" [(ngModel)]="user.lastName" [readonly]="!isEditingField('lastName')" />
+        <button (click)="editField('lastName')" *ngIf="!isEditingField('lastName')">Izmeni</button>
+      </div>
+
+      <div>
+        <label for="description">Opis:</label>
+        <textarea style="resize: none;" id="description" [(ngModel)]="user.description" [readonly]="!isEditingField('description')"></textarea>
+        <button (click)="editField('description')" *ngIf="!isEditingField('description')">Dodaj opis</button>
+      </div>
+
+      <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" [(ngModel)]="user.email" [readonly]="!isEditingField('lastName')" />
+      </div>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button (click)="saveChanges()" [disabled]="isSaving">Sačuvaj izmene</button>
+    <button (click)="cancelChanges()" [disabled]="isSaving">Odustani</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+</div>

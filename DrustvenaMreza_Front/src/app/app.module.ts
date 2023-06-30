@@ -17,7 +17,11 @@ import { AuthService } from './services/auth.service';
 import { EditGroupPopupComponent } from './edit-group-popup/edit-group-popup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PostComponent } from './post/post.component';
-
+import { UserService } from './services/user.service';
+import { PostService } from './services/post.service';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -32,7 +36,9 @@ import { PostComponent } from './post/post.component';
     LoginComponent,
     RegistrationComponent,
     EditGroupPopupComponent,
-    PostComponent
+    PostComponent,
+    UserProfileComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -40,9 +46,10 @@ import { PostComponent } from './post/post.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
   ],
-  providers: [GroupService, AuthService],
+  providers: [GroupService, AuthService, UserService, PostService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

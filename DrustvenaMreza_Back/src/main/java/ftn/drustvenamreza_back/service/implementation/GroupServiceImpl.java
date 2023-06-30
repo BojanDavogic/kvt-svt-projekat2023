@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.model.dto.GroupDTO;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.repository.GroupRepository;
 import ftn.drustvenamreza_back.service.GroupService;
@@ -17,7 +18,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public List<Group> getAllGroups() {
-        return groupRepository.findAll();
+        return groupRepository.findByIsDeletedFalse();
     }
 
     public Group createGroup(Group group) {
@@ -51,12 +52,10 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(group);
     }
 
-    public Group updateGroup(Long groupId, Group updatedGroup) {
+    public Group updateGroup(Long groupId, GroupDTO updatedGroup) {
         Group existingGroup = getGroupById(groupId);
         existingGroup.setName(updatedGroup.getName());
         existingGroup.setDescription(updatedGroup.getDescription());
-        existingGroup.setIsSuspended(updatedGroup.getIsSuspended());
-        existingGroup.setSuspendedReason(updatedGroup.getSuspendedReason());
         return groupRepository.save(existingGroup);
     }
 

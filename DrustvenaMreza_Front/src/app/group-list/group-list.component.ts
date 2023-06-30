@@ -46,14 +46,8 @@ export class GroupListComponent implements OnInit {
   }
 
   showPopup: boolean = false;
-  addNewGroup(){
-
-  }
 
   showEditPopup: boolean = false;
-  editGroup(){
-
-  }
 
   openEditPopup(group: any) {
     this.showEditPopup = true;
@@ -63,12 +57,13 @@ export class GroupListComponent implements OnInit {
   openPopup() {
     this.showPopup = true;
   }
+
+  closeEditPopup() {
+    this.showEditPopup = false;
+  }
   
   closePopup() {
     this.showPopup = false;
   }
 
-  closeEditPopup() {
-    this.showEditPopup = false;
-  }
 }

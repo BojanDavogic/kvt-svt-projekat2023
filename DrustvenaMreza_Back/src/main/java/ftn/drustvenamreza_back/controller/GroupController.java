@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.controller;
 
+import ftn.drustvenamreza_back.model.dto.GroupDTO;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.service.implementation.GroupServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{groupId}")
     public ResponseEntity<Group> getGroupById(@PathVariable Long groupId) {
         Group group = groupService.getGroupById(groupId);
@@ -37,7 +38,7 @@ public class GroupController {
     }
 
     @PutMapping("/{groupId}")
-    public ResponseEntity<Group> updateGroup(@PathVariable Long groupId, @RequestBody Group group) {
+    public ResponseEntity<Group> updateGroup(@PathVariable Long groupId, @RequestBody GroupDTO group) {
         Group updatedGroup = groupService.updateGroup(groupId, group);
         if (updatedGroup != null) {
             return ResponseEntity.ok(updatedGroup);

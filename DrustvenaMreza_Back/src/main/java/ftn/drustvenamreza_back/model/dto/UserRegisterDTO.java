@@ -10,12 +10,14 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO {
+public class UserRegisterDTO {
     private Long id;
     @NotBlank
     private String username;
     @NotBlank
     private String password;
+    @NotBlank
+    private String passwordConfirm;
     @NotBlank
     private String email;
     @NotBlank
@@ -25,7 +27,7 @@ public class UserDTO {
 
     // Konstruktor, getteri i setteri
 
-    public UserDTO(User createdUser) {
+    public UserRegisterDTO(User createdUser) {
         this.id = createdUser.getId();
         this.username = createdUser.getUsername();
         this.email = createdUser.getEmail();

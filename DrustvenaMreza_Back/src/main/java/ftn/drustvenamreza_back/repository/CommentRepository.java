@@ -1,11 +1,12 @@
 package ftn.drustvenamreza_back.repository;
 
-import ftn.drustvenamreza_back.model.entity.Group;
+import ftn.drustvenamreza_back.model.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
-public interface GroupRepository extends JpaRepository<Group, Long> {
-    List<Group> findByIsDeletedFalse();
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+    List<Comment> findByPostIdAndIsDeletedFalse(Long postId);
 }

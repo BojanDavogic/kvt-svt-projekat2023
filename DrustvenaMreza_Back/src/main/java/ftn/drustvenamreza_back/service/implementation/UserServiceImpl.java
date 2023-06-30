@@ -1,13 +1,23 @@
 package ftn.drustvenamreza_back.service.implementation;
 
-import ftn.drustvenamreza_back.model.dto.UserDTO;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.repository.UserRepository;
 import ftn.drustvenamreza_back.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,5 +73,27 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(true);
             userRepository.save(user);
         }
+    }
+
+    public User getCurrentUser() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            Claims claims = Jwts.parser().setSigningKey("biloKojiString").parseClaimsJws(token).getBody();
+            String username = claims.getSubject();
+            // Vratite korisnika na osnovu username-a
+            User user = userRepository.findByUsername(username);
+            return user;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void updateLastLogin(User user, LocalDateTime lastLogin) {
+        user.setLastLogin(lastLogin);
+        userRepository.save(user);
     }
 }

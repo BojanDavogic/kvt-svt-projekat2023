@@ -1,6 +1,6 @@
 package ftn.drustvenamreza_back.controller;
 
-import ftn.drustvenamreza_back.model.dto.UserDTO;
+import ftn.drustvenamreza_back.model.dto.UserRegisterDTO;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class RegisterController {
             return ResponseEntity.badRequest().body("Email već postoji");
         }
 
-        UserDTO newUser = new UserDTO();
+        UserRegisterDTO newUser = new UserRegisterDTO();
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
         newUser.setFirstName(user.getFirstName());

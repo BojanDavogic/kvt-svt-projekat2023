@@ -1,26 +1,24 @@
 package ftn.drustvenamreza_back.controller;
 
 import ftn.drustvenamreza_back.model.dto.ChangePasswordDTO;
-import ftn.drustvenamreza_back.model.dto.UserDTO;
+import ftn.drustvenamreza_back.model.dto.UserRegisterDTO;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.security.TokenUtils;
 import ftn.drustvenamreza_back.service.UserService;
-import ftn.drustvenamreza_back.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -69,7 +67,7 @@ public class UserController {
         if(createdUser == null){
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
         }
-        UserDTO userDTO = new UserDTO(createdUser);
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO(createdUser);
 
         return ResponseEntity.ok(createdUser);
     }
@@ -92,8 +90,38 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<User> getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userService.getUserByUsername(currentUsername);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<Void> updateUserProfile(@RequestBody User updatedUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userService.getUserByUsername(currentUsername);
+
+        if (user != null) {
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
+            user.setDescription(updatedUser.getDescription());
+            userService.updateUser(user);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/{id}/change-password")
-    public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDto) {
+    public ResponseEntity<Object> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDto) {
         User user = userService.getUserById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -110,9 +138,22 @@ public class UserController {
             return ResponseEntity.badRequest().body("Trenutna lozinka nije ispravna");
         }
 
-        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        String newPassword = changePasswordDto.getNewPassword();
+        String newPasswordConfirm = changePasswordDto.getNewPasswordConfirm();
+
+        if (!newPassword.equals(newPasswordConfirm)) {
+            return ResponseEntity.badRequest().body("Nova lozinka se ne podudara s potvrdom lozinke");
+        }
+
+        // Dodajte provjeru složenosti lozinke prema vašim zahtjevima
+
+        user.setPassword(passwordEncoder.encode(newPassword));
         userService.updateUser(user);
 
-        return ResponseEntity.ok("Lozinka je uspešno promenjena");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Lozinka je uspešno promenjena");
+        return ResponseEntity.ok(response);
     }
+
+
 }

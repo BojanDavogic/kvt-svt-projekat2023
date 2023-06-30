@@ -74,4 +74,5 @@ public class TokenUtils {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
+
 }

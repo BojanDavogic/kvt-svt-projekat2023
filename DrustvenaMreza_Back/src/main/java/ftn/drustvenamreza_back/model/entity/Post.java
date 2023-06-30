@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,15 +21,15 @@ public class Post {
 
     @Column(nullable = false)
     private String content;
-
-    @Column(nullable = true)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm")
+    @Column(nullable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "posted_by_id")
+    @JoinColumn(name = "posted_by_id", nullable = false)
     private User postedBy;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)

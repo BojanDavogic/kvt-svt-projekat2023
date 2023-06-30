@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 // import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
 		private fb: FormBuilder,
 		private authenticationService: AuthService,
 		private router: Router,
-		// private toastr: ToastrService
+		private toastr: ToastrService
 	) {
 		this.form = this.fb.group({
 			username : [null, Validators.required],
@@ -25,8 +26,7 @@ export class LoginComponent implements OnInit {
 		});
 	}
 
-	ngOnInit() {
-	}
+	ngOnInit() {}
 
 	get username(): FormControl {
 		return this.form.get('username') as FormControl;
@@ -43,10 +43,11 @@ export class LoginComponent implements OnInit {
 
 		this.authenticationService.login(auth).subscribe(
 			result => {
-				// this.toastr.success('Successful login!');
 				localStorage.setItem('user', JSON.stringify(result));
 				this.authenticationService.isLoggedIn();
+				// this.toastr.success('Successful login!');
 				this.router.navigate(['home-page']);
+				
 			},
 			error => {
 				// this.toastr.error(error.error);

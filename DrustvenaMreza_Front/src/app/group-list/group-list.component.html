@@ -10,7 +10,7 @@
       </a>
       <div class="group-edit-delete">
         <button class="edit-group-button" (click)="openEditPopup(group)">Izmeni</button>
-        <button class="delete-group-button">Obrisi</button>
+        <button class="delete-group-button" (click)="deleteGroup(group.id)">Obrisi</button>
       </div>
     </div>
   </div>
@@ -21,4 +21,4 @@
   <app-new-group-popup
   *ngIf="showPopup"
   (groupAdded)="addGroup($event)"
-  (popupClosed)="closePopup()"></app-new-group-popup>
+  (popupClosed)="closePopup()"/>
