@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
             token = token.substring(7);
             Claims claims = Jwts.parser().setSigningKey("biloKojiString").parseClaimsJws(token).getBody();
             String username = claims.getSubject();
-            // Vratite korisnika na osnovu username-a
+
             User user = userRepository.findByUsername(username);
             return user;
         }

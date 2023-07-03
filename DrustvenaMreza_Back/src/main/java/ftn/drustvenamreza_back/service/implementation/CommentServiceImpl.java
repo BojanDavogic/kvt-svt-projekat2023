@@ -41,11 +41,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateComment(Long commentId, String updatedText) {
+    public Comment updateComment(Long commentId, Comment updatedComment) {
         Comment comment = getCommentById(commentId);
-        comment.setText(updatedText);
+        comment.setText(updatedComment.getText());
         comment.setTimestamp(LocalDateTime.now());
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.config;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -19,10 +20,7 @@ public class JacksonConfig {
 //    @Bean
 //    public ObjectMapper objectMapper() {
 //        ObjectMapper objectMapper = new ObjectMapper();
-//        SimpleModule module = new SimpleModule();
-//        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
-//        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));
-//        objectMapper.registerModule(module);
+//        objectMapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
 //        return objectMapper;
 //    }
 

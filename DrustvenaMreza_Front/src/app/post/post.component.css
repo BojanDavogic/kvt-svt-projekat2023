@@ -106,18 +106,6 @@
     border: black;
     border-radius: 2px;
   }
-
-  .post-actions button:first-child:focus {
-    background-color: aqua;
-  }
-
-  .post-actions button:nth-child(2):focus {
-    background-color: rgb(2, 183, 126);
-  }
-
-  .post-actions button:nth-child(3):focus {
-    background-color: red;
-  }
   
   .comments {
     margin-top: 10px;
@@ -147,4 +135,13 @@
     right: 0;
     bottom: 0;
   }
+
+  #editComment {
+    color: black;
+  }
+
+  .buttonComment {
+    color: black;
+  }
   
+
