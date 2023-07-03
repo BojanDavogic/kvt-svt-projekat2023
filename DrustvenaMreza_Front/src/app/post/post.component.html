@@ -26,38 +26,38 @@
       <p id="content" *ngIf="!post.isEditing">{{ post.content }}</p>
       <textarea id="editText" *ngIf="post.isEditing" [(ngModel)]="post.updatedContent"></textarea>
     </div>
+    <p class="reactions">
+      Liked by: &nbsp;
+      <ng-container *ngFor="let reaction of post.reactions">
+        <ng-container *ngIf="reaction.type === 'LIKE'">
+          <p>{{ reaction.madeBy?.username + ", " }}</p>
+        </ng-container>
+      </ng-container>
+    </p>
+  
+    <p class="reactions">
+      Disliked by: &nbsp; 
+      <ng-container *ngFor="let reaction of post.reactions">
+        <ng-container *ngIf="reaction.type === 'DISLIKE'">
+          <p>{{ reaction.madeBy?.username + ", "}}</p>
+        </ng-container>
+      </ng-container>
+    </p>
+  
+    <p class="reactions">
+      Loved by: &nbsp;
+      <ng-container *ngFor="let reaction of post.reactions">
+        <ng-container *ngIf="reaction.type === 'HEART'">
+          <p>{{ reaction.madeBy?.username + ", " }}</p>
+        </ng-container>
+      </ng-container>
+    </p>
     <div class="post-actions">
       <button (click)="likePost(post.id)" class="like-button" [ngStyle]="{ 'background-color': isLiked(post) ? 'aqua' : 'whitesmoke' }">Like</button>
       <button (click)="dislikePost(post.id)" class="dislike-button" [ngStyle]="{ 'background-color': isDisliked(post) ? 'green' : 'whitesmoke' }">Dislike</button>
       <button (click)="heartPost(post.id)" class="heart-button" [ngStyle]="{ 'background-color': isHearted(post) ? 'red' : 'whitesmoke' }">Heart</button>
       <button (click)="openComments(post)">Comments</button>
     </div>
-    <p class="reactions">
-      Liked by: 
-      <ng-container *ngFor="let reaction of post.reactions">
-        <ng-container *ngIf="reaction.type === 'LIKE'">
-          <p>{{ reaction.madeBy?.username }}</p>
-        </ng-container>
-      </ng-container>
-    </p>
-  
-    <p class="reactions">
-      Disliked by: 
-      <ng-container *ngFor="let reaction of post.reactions">
-        <ng-container *ngIf="reaction.type === 'DISLIKE'">
-          <p>{{ reaction.madeBy?.username }}</p>
-        </ng-container>
-      </ng-container>
-    </p>
-  
-    <p class="reactions">
-      Loved by: 
-      <ng-container *ngFor="let reaction of post.reactions">
-        <ng-container *ngIf="reaction.type === 'HEART'">
-          <p>{{ reaction.madeBy?.username }}</p>
-        </ng-container>
-      </ng-container>
-    </p>
     <div class="comments" *ngIf="post.showComments">
       <div class="comment" *ngFor="let comment of post.comments">
         <p>{{ comment.user?.username }}</p>
@@ -65,13 +65,45 @@
           <p>{{ comment.text }}</p>
         </ng-container>
         <ng-container *ngIf="comment.isEditing">
-          <textarea id="editComment" [(ngModel)]="comment.updatedText"></textarea>
+          <textarea id="editComment" style="resize: none;" [(ngModel)]="comment.updatedText"></textarea>
           <button class="buttonComment" (click)="updateComment(post, comment.id, comment)">Sačuvaj</button>
           <button class="buttonComment" (click)="cancelEditComment(comment)">Otkaži</button>
         </ng-container>
         <p id="commentTimestamp">{{ comment.timestamp }}</p>
         <button class="buttonComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="editComment(comment)">Izmeni</button>
         <button class="buttonComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="deleteComment(post, comment.id)">Obriši</button>
+        <br>
+        <p class="comment-reactions">
+          Liked by: &nbsp;
+          <ng-container *ngFor="let reaction of comment.reactions">
+            <ng-container *ngIf="reaction.type === 'LIKE'">
+              <p>{{ reaction.madeBy?.username + ", "  }}</p>
+            </ng-container>
+          </ng-container>
+        </p>
+    
+        <p class="comment-reactions">
+          Disliked by: &nbsp;
+          <ng-container *ngFor="let reaction of comment.reactions">
+            <ng-container *ngIf="reaction.type === 'DISLIKE'">
+              <p>{{ reaction.madeBy?.username + ", "  }}</p>
+            </ng-container>
+          </ng-container>
+        </p>
+    
+        <p class="comment-reactions">
+          Loved by: &nbsp;
+          <ng-container *ngFor="let reaction of comment.reactions">
+            <ng-container *ngIf="reaction.type === 'HEART'">
+              <p>{{ reaction.madeBy?.username + ", "  }}</p>
+            </ng-container>
+          </ng-container>
+        </p>
+        <div class="comment-reactions">
+          <button (click)="likeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isLikedComment(comment) ? 'aqua' : 'whitesmoke' }">Like</button>
+          <button (click)="dislikeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isDislikedComment(comment) ? 'green' : 'whitesmoke' }">Dislike</button>
+          <button (click)="heartComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isHeartedComment(comment) ? 'red' : 'whitesmoke' }">Heart</button>
+        </div>
         <hr>
       </div>
       <form (submit)="addComment(post.id, commentInput)">
@@ -79,4 +111,5 @@
         <button id="btnAddComment" type="submit">Add Comment</button>
       </form>
     </div>
+    
   </div>

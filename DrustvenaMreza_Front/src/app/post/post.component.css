@@ -75,7 +75,7 @@
   #btnObrisi {
     position: absolute;
     right: 0;
-    top: 50px;
+    top: 200px;
     margin-top: 30px;
     margin: 10px;
     color: white;
@@ -109,8 +109,9 @@
   
   .comments {
     margin-top: 10px;
-    padding-top: 10px;
+    padding: 10px;
     border-top: 1px solid #ccc;
+    background-color: rgba(200, 255, 0, 0.142);
   }
 
   #commentInput {
@@ -142,6 +143,22 @@
 
   .buttonComment {
     color: black;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .buttonComment:last-of-type {
+    top: 30px;
+  }
+
+  .comment-reactions button {
+    color: black;
+  }
+
+  .comment-reactions, .reactions {
+    display: flex;
+    flex-direction: row;
   }
   
 

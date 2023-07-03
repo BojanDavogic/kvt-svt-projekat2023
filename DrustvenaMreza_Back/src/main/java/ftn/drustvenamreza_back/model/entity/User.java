@@ -49,6 +49,14 @@ public class User {
     )
     private List<User> friends;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private List<Group> userGroups;
+
     public User(String username) {
     }
 

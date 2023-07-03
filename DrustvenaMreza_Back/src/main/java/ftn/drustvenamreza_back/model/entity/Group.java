@@ -39,9 +39,9 @@ public class Group {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
-    @JsonIgnore
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Post> posts = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "group")
 //    private List<Banned> bannedList;
@@ -61,16 +61,9 @@ public class Group {
         this.isDeleted = false;
     }
 
-    public void removePost(Post post) {
-        posts.remove(post);
-        post.setGroup(null);
-    }
-
-    public void addPost(Post post) {
-        posts.add(post);
-        post.setGroup(this);
-    }
-
+//    public Group() {
+//        this.groupAdmins = new ArrayList<>();
+//    }
 //    public void addBanned(Banned banned) {
 //        bannedList.add(banned);
 //        banned.setGroup(this);

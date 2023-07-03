@@ -1,3 +1,4 @@
+import { Group } from "./group.model";
 import { User } from "./user.model";
 
 export interface Post {
@@ -5,7 +6,6 @@ export interface Post {
     postedBy?: User;
     creationDate?: Date;
     content: string;
-    group?: number;
     isDeleted?: boolean;
     isEditing: boolean; // Stanje izmjene sadržaja
     updatedContent: string; // Ažurirani sadržaj
@@ -14,6 +14,7 @@ export interface Post {
     comments: Comment[];
     reactions: Reaction[];
     selectedReactions: [];
+    group?: Group;
 }
 
 export interface Comment {
@@ -24,6 +25,7 @@ export interface Comment {
     isEditing?: boolean;
     updatedText: string;
     isUpdating: boolean;
+    reactions: Reaction[];
 }
 
 export interface Reaction {

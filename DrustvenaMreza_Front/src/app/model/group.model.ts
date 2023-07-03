@@ -1,5 +1,6 @@
 import { group } from "@angular/animations";
 import { DatePipe } from "@angular/common";
+import { Post } from "./post.model";
 
 export interface Group {
   id?: any;
@@ -9,6 +10,7 @@ export interface Group {
   isSuspended: boolean;
   suspendedReason: string;
   isDeleted: boolean;
+  // posts: Post[];
 }
 
 

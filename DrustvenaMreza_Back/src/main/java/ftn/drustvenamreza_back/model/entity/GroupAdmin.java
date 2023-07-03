@@ -31,4 +31,8 @@ public class GroupAdmin {
 
     @OneToMany(mappedBy = "bannedByGroupAdmin")
     private List<Banned> bannedList;
+
+    public GroupAdmin(User user) {
+        this.user = user;
+    }
 }

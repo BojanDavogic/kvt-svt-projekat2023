@@ -2,12 +2,13 @@ package ftn.drustvenamreza_back.controller;
 
 import ftn.drustvenamreza_back.model.dto.GroupDTO;
 import ftn.drustvenamreza_back.model.entity.*;
-import ftn.drustvenamreza_back.service.implementation.GroupServiceImpl;
+import ftn.drustvenamreza_back.service.implementation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -15,9 +16,17 @@ import java.util.List;
 public class GroupController {
 
     private final GroupServiceImpl groupService;
+    private final UserServiceImpl userService;
+    private final PostServiceImpl postService;
+    private final CommentServiceImpl commentService;
+    private final ReactionServiceImpl reactionService;
 
-    public GroupController(GroupServiceImpl groupService) {
+    public GroupController(GroupServiceImpl groupService, UserServiceImpl userService, PostServiceImpl postService, CommentServiceImpl commentService, ReactionServiceImpl reactionService) {
         this.groupService = groupService;
+        this.userService = userService;
+        this.postService = postService;
+        this.commentService = commentService;
+        this.reactionService = reactionService;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
@@ -33,8 +42,38 @@ public class GroupController {
 
     @PostMapping
     public ResponseEntity<Group> createGroup(@RequestBody Group group) {
-        Group createdGroup = groupService.createGroup(group);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User creator = userService.getUserByUsername(authentication.getName());
+        Group createdGroup = groupService.createGroup(group, creator);
         return ResponseEntity.ok(createdGroup);
+    }
+
+    @PostMapping("/{groupId}/admins")
+    public ResponseEntity<Void> addGroupAdmin(@PathVariable Long groupId, @RequestParam Long userId) {
+        Group group = groupService.getGroupById(groupId);
+        User admin = userService.getUserById(userId);
+
+        if (group != null && admin != null) {
+
+            groupService.addGroupAdmin(group, admin);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{groupId}/admins/{adminId}")
+    public ResponseEntity<Void> removeGroupAdmin(@PathVariable Long groupId, @PathVariable Long adminId) {
+        Group group = groupService.getGroupById(groupId);
+        User admin = userService.getUserById(adminId);
+
+        if (group != null && admin != null) {
+
+            groupService.removeGroupAdmin(group, admin);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{groupId}")
@@ -58,108 +97,6 @@ public class GroupController {
         List<Group> groups = groupService.getAllGroups();
         return ResponseEntity.ok(groups);
     }
-
-    @PostMapping("/{id}/posts")
-    public ResponseEntity<Void> addPostToGroup(@PathVariable Long id, @RequestBody Post post) {
-        Group group = groupService.getGroupById(id);
-        if (group != null) {
-            groupService.addPostToGroup(post, group);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{groupId}/posts/{postId}")
-    public ResponseEntity<Void> removePostFromGroup(@PathVariable Long groupId, @PathVariable Long postId) {
-        Group group = groupService.getGroupById(groupId);
-        if (group != null) {
-            Post post = new Post();
-            post.setId(postId);
-            groupService.removePostFromGroup(post, group);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/{id}/posts")
-    public ResponseEntity<List<Post>> getGroupPosts(@PathVariable Long id) {
-        List<Post> posts = groupService.getGroupPosts(id);
-        return ResponseEntity.ok(posts);
-    }
-
-//    @PostMapping("/{id}/banned")
-//    public ResponseEntity<Void> addBannedToGroup(@PathVariable Long id, @RequestBody Banned banned) {
-//        Group group = groupService.getGroupById(id);
-//        if (group != null) {
-//            groupService.addBannedToGroup(group, banned);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @DeleteMapping("/{groupId}/banned/{bannedId}")
-//    public ResponseEntity<Void> removeBannedFromGroup(@PathVariable Long groupId, @PathVariable Long bannedId) {
-//        Group group = groupService.getGroupById(groupId);
-//        if (group != null) {
-//            Banned banned = new Banned();
-//            banned.setId(bannedId);
-//            groupService.removeBannedFromGroup(group, banned);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @PostMapping("/{id}/admins")
-//    public ResponseEntity<Void> addGroupAdmin(@PathVariable Long id, @RequestBody GroupAdmin groupAdmin) {
-//        Group group = groupService.getGroupById(id);
-//        if (group != null) {
-//            groupService.addGroupAdmin(group, groupAdmin);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @DeleteMapping("/{groupId}/admins/{adminId}")
-//    public ResponseEntity<Void> removeGroupAdmin(@PathVariable Long groupId, @PathVariable Long adminId) {
-//        Group group = groupService.getGroupById(groupId);
-//        if (group != null) {
-//            GroupAdmin groupAdmin = new GroupAdmin();
-//            groupAdmin.setId(adminId);
-//            groupService.removeGroupAdmin(group, groupAdmin);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @PostMapping("/{id}/requests")
-//    public ResponseEntity<Void> addGroupRequest(@PathVariable Long id, @RequestBody GroupRequest groupRequest) {
-//        Group group = groupService.getGroupById(id);
-//        if (group != null) {
-//            groupService.addGroupRequest(group, groupRequest);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @DeleteMapping("/{groupId}/requests/{requestId}")
-//    public ResponseEntity<Void> removeGroupRequest(@PathVariable Long groupId, @PathVariable Long requestId) {
-//        Group group = groupService.getGroupById(groupId);
-//        if (group != null) {
-//            GroupRequest groupRequest = new GroupRequest();
-//            groupRequest.setId(requestId);
-//            groupService.removeGroupRequest(group, groupRequest);
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
     @PostMapping("/{id}/suspend")
     public ResponseEntity<Void> suspendGroup(@PathVariable Long id, @RequestParam String reason) {

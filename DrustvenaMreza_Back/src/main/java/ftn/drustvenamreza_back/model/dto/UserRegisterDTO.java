@@ -25,8 +25,6 @@ public class UserRegisterDTO {
     @NotBlank
     private String lastName;
 
-    // Konstruktor, getteri i setteri
-
     public UserRegisterDTO(User createdUser) {
         this.id = createdUser.getId();
         this.username = createdUser.getUsername();

@@ -29,8 +29,8 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentComment")
-    private List<Comment> replies;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentComment")
+//    private List<Comment> replies;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
@@ -43,21 +43,21 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(mappedBy = "comment")
-    private List<Report> reports;
+//    @OneToMany(mappedBy = "comment")
+//    private List<Report> reports;
 
-    @OneToMany(mappedBy = "comment")
-    private List<Reaction> reactions;
+//    @OneToMany(mappedBy = "comment")
+//    private List<Reaction> reactions;
 
-    public void addReply(Comment reply) {
-        reply.setParentComment(this);
-        replies.add(reply);
-        reply.setPost(this.getPost());
-    }
-
-    public void removeReply(Comment reply) {
-        reply.setParentComment(null);
-        replies.remove(reply);
-        reply.setPost(null);
-    }
+//    public void addReply(Comment reply) {
+//        reply.setParentComment(this);
+//        replies.add(reply);
+//        reply.setPost(this.getPost());
+//    }
+//
+//    public void removeReply(Comment reply) {
+//        reply.setParentComment(null);
+//        replies.remove(reply);
+//        reply.setPost(null);
+//    }
 }

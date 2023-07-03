@@ -1,6 +1,7 @@
 package ftn.drustvenamreza_back.service.implementation;
 
 import ftn.drustvenamreza_back.model.entity.Comment;
+import ftn.drustvenamreza_back.model.entity.Group;
 import ftn.drustvenamreza_back.model.entity.Post;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.repository.CommentRepository;
@@ -34,6 +35,17 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post);
     }
 
+    @Override
+    public Post createGroupPost(Group group, Post post, User user) {
+        if (user == null) {
+            user = userService.getCurrentUser();
+        }
+        post.setCreationDate(LocalDateTime.now());
+        post.setPostedBy(user);
+        post.setGroup(group);
+        return postRepository.save(post);
+    }
+
     public List<Post> getAllPostsWithoutGroup() {
         return postRepository.findByGroupIdIsNullAndIsDeletedFalse();
     }
@@ -45,6 +57,11 @@ public class PostServiceImpl implements PostService {
 
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElse(null);
+    }
+
+    @Override
+    public Post getPostByGroupId(Long groupId) {
+        return (Post) postRepository.findByGroupIdAndIsDeletedFalse(groupId);
     }
 
     public void updatePost(Long postId, String updatedContent, User user) {
@@ -59,6 +76,11 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    @Override
+    public void updateGroupPost(Long groupId, Long postId, String updatedContent, User user) {
+
+    }
+
 
     public void deletePost(Long postId) {
         Post post = getPostById(postId);
@@ -68,22 +90,11 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-//    public Comment addCommentToPost(Long postId, String commentContent, User commentedBy) {
-//        Post post = getPostById(postId);
-//        if (post != null) {
-//            Comment comment = new Comment();
-//            comment.setText(commentContent);
-//            comment.setUser(commentedBy);
-//            comment.setPost(post);
-//            post.getComments().add(comment);
-//            return postRepository.save(post).getComments().stream()
-//                    .filter(c -> c.getText().equals(commentContent) && c.getUser().equals(commentedBy))
-//                    .findFirst()
-//                    .orElse(null);
-//        }
-//        return null;
-//    }
-//
+    @Override
+    public void deleteGroupPost(Long groupId, Long postId) {
+
+    }
+
 //    public void addImageToPost(Long postId, Image image) {
 //        Post post = getPostById(postId);
 //        if (post != null) {

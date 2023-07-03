@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 })
 export class PostService {
   private apiUrl = environment.baseUrl + '/posts';
+  private apiUrlGroup = environment.baseUrl + '/groups';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -24,6 +25,12 @@ export class PostService {
     return this.http.post<Post>(this.apiUrl, post, { headers });
   }
 
+  createGroupPost(groupId: number, post: Post): Observable<Post> {
+    const url = `${this.apiUrlGroup}/${groupId}/posts`;
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.post<Post>(url, post, { headers });
+  }
+
   updatePost(postId: number, postContent: string): Observable<Post> {
     const url = `${this.apiUrl}/${postId}`;
     const headers = this.authService.getAuthenticatedHeaders();
@@ -36,19 +43,21 @@ export class PostService {
     return this.http.delete<void>(url, { headers });
   }
 
-  // getAllPosts(): Observable<Post[]> {
-  //   const headers = this.authService.getAuthenticatedHeaders();
-  //   return this.http.get<Post[]>(this.apiUrl, { headers, responseType: 'json' });
-  // }
+  deleteGroupPost(groupId: number, postId: number): Observable<void> {
+    const url = `${this.apiUrlGroup}/${groupId}/posts/${postId}`;
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.delete<void>(url, { headers });
+  }
 
-    getAllPostsWithoutGroup(): Observable<Post[]> {
+  getAllPostsWithoutGroup(): Observable<Post[]> {
     const url = `${this.apiUrl}`;
     const headers = this.authService.getAuthenticatedHeaders();
     return this.http.get<Post[]>(url, { headers, responseType: 'json' });
   }
 
   getPostsByGroupId(groupId: number): Observable<Post[]> {
-    const url = `${this.apiUrl}/group/${groupId}`;
+    const url = `${this.apiUrlGroup}/${groupId}/posts`;
+    console.log(url);
     const headers = this.authService.getAuthenticatedHeaders();
     return this.http.get<Post[]>(url, { headers, responseType: 'json' });
   }
@@ -82,10 +91,12 @@ export class PostService {
     const url = `${this.apiUrl}/${postId}/reactions`;
     const headers = this.authService.getAuthenticatedHeaders();
   
-    const reactionData = {
-      type: reaction,
-    };
-    console.log(reactionData, "Ovo je json");
+    return this.http.post<Reaction>(url, reaction, { headers, responseType: 'json' });
+  }
+
+  addReactionForComment(commentId: number, reaction: string): Observable<Reaction> {
+    const url = `${this.apiUrl}/comments/${commentId}/reactions`;
+    const headers = this.authService.getAuthenticatedHeaders();
   
     return this.http.post<Reaction>(url, reaction, { headers, responseType: 'json' });
   }
@@ -96,15 +107,32 @@ export class PostService {
     return this.http.get<Reaction[]>(url, { headers, responseType: 'json' });
   }
 
+  getReactionsForComment(commentId: number): Observable<Reaction[]> {
+    const url = `${this.apiUrl}/comments/${commentId}/reactions`;
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.get<Reaction[]>(url, { headers, responseType: 'json' });
+  }
+
   updateReaction(reactionId: number, newReaction: string): Observable<Reaction> {
     const url = `${this.apiUrl}/reactions/${reactionId}`;
-    const payload = { text: newReaction };
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.put<Reaction>(url, newReaction, { headers, responseType: 'json' });
+  }
+
+  updateCommentReaction(commentId: number, reactionId: number, newReaction: string): Observable<Reaction> {
+    const url = `${this.apiUrl}/comments/${commentId}/reactions/${reactionId}`;
     const headers = this.authService.getAuthenticatedHeaders();
     return this.http.put<Reaction>(url, newReaction, { headers, responseType: 'json' });
   }
 
   deleteReaction(reactionId: number): Observable<void> {
     const url = `${this.apiUrl}/reactions/${reactionId}`;
+    const headers = this.authService.getAuthenticatedHeaders();
+    return this.http.delete<void>(url, { headers, responseType: 'json' });
+  }
+
+  deleteCommentReaction(commentId: number, reactionId: number): Observable<void> {
+    const url = `${this.apiUrl}/comments/${commentId}/reactions/${reactionId}`;
     const headers = this.authService.getAuthenticatedHeaders();
     return this.http.delete<void>(url, { headers, responseType: 'json' });
   }

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PostService } from '../services/post.service'; 
 import { Post, Comment, Reaction } from '../model/post.model';
 import { AuthService } from '../services/auth.service';
 import { User } from '../model/user.model';
+import { Group } from '../model/group.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-post',
@@ -10,7 +12,10 @@ import { User } from '../model/user.model';
   styleUrls: ['./post.component.css']
 })
 export class PostComponent implements OnInit {
+  @Input() group?: Group;
+
   posts: Post[] = [];
+  comments: Comment[] = [];
   newPostContent: string = '';
   commentInput: string = '';
   currentUser: any;
@@ -20,6 +25,7 @@ export class PostComponent implements OnInit {
   constructor(private postService: PostService, private authService: AuthService) {}
 
   ngOnInit() {
+    console.log(this.group)
     this.currentUser = this.authService.getCurrentUser();
     this.loadPosts();
   }
@@ -47,7 +53,14 @@ export class PostComponent implements OnInit {
       selectedReactions: []
     };
 
-    this.postService.createPost(newPost).subscribe(
+    let createPostRequest: Observable<Post>;
+    if (this.group) {
+      createPostRequest = this.postService.createGroupPost(this.group.id, newPost);
+    } else {
+      createPostRequest = this.postService.createPost(newPost);
+    }
+
+    createPostRequest.subscribe(
       createdPost => {
         this.posts.push(createdPost);
         this.loadPosts();
@@ -60,8 +73,16 @@ export class PostComponent implements OnInit {
   }
 
   loadPosts() {
-    this.postService.getAllPostsWithoutGroup().subscribe(
+    let getAllPostsRequest: Observable<Post[]>;
+    if (this.group) {
+      getAllPostsRequest = this.postService.getPostsByGroupId(this.group.id);
+    } else {
+      getAllPostsRequest = this.postService.getAllPostsWithoutGroup();
+    }
+
+    getAllPostsRequest.subscribe(
       posts => {
+        console.log(posts);
         this.posts = posts;
         for (const post of this.posts) {
           post.reactions = [];
@@ -188,7 +209,7 @@ export class PostComponent implements OnInit {
 
   isLiked(post: Post): boolean {
     const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
+    if (currentUser && post.reactions) {
       return post.reactions.some(reaction => reaction.type === 'LIKE' && reaction.madeBy?.username === currentUser.sub);
     }
     return false;
@@ -206,7 +227,7 @@ export class PostComponent implements OnInit {
 
   isDisliked(post: Post): boolean {
     const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
+    if (currentUser && post.reactions) {
       return post.reactions.some(reaction => reaction.type === 'DISLIKE' && reaction.madeBy?.username === currentUser.sub);
     }
     return false;
@@ -224,7 +245,7 @@ export class PostComponent implements OnInit {
 
   isHearted(post: Post): boolean {
     const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
+    if (currentUser && post.reactions) {
       return post.reactions.some(reaction => reaction.type === 'HEART' && reaction.madeBy?.username === currentUser.sub);
     }
     return false;
@@ -243,6 +264,12 @@ export class PostComponent implements OnInit {
 
   getPostById(postId: number): Post | undefined {
     return this.posts.find(post => post.id === postId);
+  }
+
+  getCommentById(postId: number, commentId: number): Comment | undefined {
+    const post = this.getPostById(postId);
+    // post = this.posts.find(post => post.id === postId);
+    return post?.comments.find(comment => comment.id === commentId);
   }
   
 
@@ -265,6 +292,21 @@ export class PostComponent implements OnInit {
       }
     );
   }
+
+  loadCommentReactions(postId: number, commentId: number) {
+    this.postService.getReactionsForComment(commentId).subscribe(
+      reactions => {
+        // const comment = this.comments.find(p => p.id === commentId);
+        const comment = this.getCommentById(postId, commentId);
+        if (comment) {
+          comment.reactions = reactions;
+        }
+      },
+      error => {
+        console.error('Greška prilikom preuzimanja reakcija:', error);
+      }
+    );
+  }
   
 
   openComments(post: Post) {
@@ -279,9 +321,13 @@ export class PostComponent implements OnInit {
 
   loadComments(post: Post) {
     if (post) {
-      console.log(post);
       this.postService.getCommentsForPost(post.id).subscribe(
         comments => {
+          this.comments = comments;
+          for(const comment of this.comments) {
+            comment.reactions = [];
+            this.loadCommentReactions(post.id, comment.id);
+          }
           post.comments = comments.map(comment => {
             return {
               ...comment,
@@ -308,12 +354,12 @@ export class PostComponent implements OnInit {
       const newComment: Comment = {
         text: commentContent,
         updatedText: '',
-        isUpdating: false
+        isUpdating: false,
+        reactions: []
       };
       this.postService.addComment(post.id, newComment).subscribe(
         createdComment => {
           post.comments.push(createdComment);
-          console.log(createdComment);
           this.commentInput = '';
         },
         error => {
@@ -376,5 +422,101 @@ export class PostComponent implements OnInit {
 
   cancelEditComment(comment: Comment) {
     comment.isEditing = false;
-  } 
+  }
+  
+  addReactionToComment(postId: number, commentId: number, reaction: string) {
+    const post = this.posts.find(p => p.id === postId);
+    if (post) {
+      const currentUser = this.authService.getCurrentUser();
+  
+      if (!currentUser) {
+        console.error('Nepoznat ulogovani korisnik.');
+        return;
+      }
+      const comment = post.comments.find(c => c.id === commentId);
+      if (comment) {
+        // Provera da li korisnik već ima reakciju na komentar
+        const userReaction = comment.reactions.find(r => r.madeBy?.username === this.currentUser.sub);
+        
+        if (userReaction) {
+          if(userReaction.type === reaction){
+            this.postService.deleteCommentReaction(comment.id, userReaction.id).subscribe(() => {
+              this.loadCommentReactions(post.id, comment.id);
+            });
+          } else {
+            this.postService.updateCommentReaction(comment.id, userReaction.id, reaction).subscribe(() => {
+              this.loadCommentReactions(post.id, comment.id);
+            });
+          }
+        } else {
+          const newCommentReaction: Reaction = {
+            type: reaction,
+            madeBy: currentUser
+          };
+
+          this.postService.addReactionForComment(comment.id, reaction).subscribe(
+            createdReaction => {
+              comment.reactions.push(newCommentReaction);
+              this.loadCommentReactions(post.id, comment.id);
+            },
+            error => {
+              // Greška pri dodavanju reakcije
+              console.error('Greška pri dodavanju reakcije na komentar', error);
+            }
+          );
+        }
+      }
+    }
+  }
+
+  isLikedComment(comment: Comment): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && comment.reactions) {
+      return comment.reactions.some(reaction => reaction.type === 'LIKE' && reaction.madeBy?.username === currentUser.sub);
+    }
+    return false;
+  }
+  
+  likeComment(postId: number, commentId: number) {
+    this.selectedButton = 'like';
+    this.addReactionToComment(postId, commentId, 'LIKE');
+    const comment = this.getCommentById(postId, commentId);
+    if (comment) {
+      this.loadCommentReactions(postId, comment.id);
+    }
+  }
+
+  isDislikedComment(comment: Comment): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && comment.reactions) {
+      return comment.reactions.some(reaction => reaction.type === 'DISLIKE' && reaction.madeBy?.username === currentUser.sub);
+    }
+    return false;
+  }
+  
+  dislikeComment(postId: number, commentId: number) {
+    this.selectedButton = 'dislike';
+    this.addReactionToComment(postId, commentId, 'DISLIKE');
+    const comment = this.getCommentById(postId, commentId);
+    if (comment) {
+      this.loadCommentReactions(postId, comment.id);
+    }
+  }
+  
+  isHeartedComment(comment: Comment): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && comment.reactions) {
+      return comment.reactions.some(reaction => reaction.type === 'HEART' && reaction.madeBy?.username === currentUser.sub);
+    }
+    return false;
+  }
+  
+  heartComment(postId: number, commentId: number) {
+    this.selectedButton = 'heart';
+    this.addReactionToComment(postId, commentId, 'HEART');
+    const comment = this.getCommentById(postId, commentId);
+    if (comment) {
+      this.loadCommentReactions(postId, comment.id);
+    }
+  }
 }

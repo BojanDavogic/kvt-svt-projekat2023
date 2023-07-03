@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             } else if ("User".equals(dtype)) {
                 grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             } else {
-                // Dodajte kod za obradu drugih tipova korisnika ako je potrebno
+
             }
 
             return new org.springframework.security.core.userdetails.User(

@@ -145,8 +145,6 @@ public class UserController {
             return ResponseEntity.badRequest().body("Nova lozinka se ne podudara s potvrdom lozinke");
         }
 
-        // Dodajte provjeru složenosti lozinke prema vašim zahtjevima
-
         user.setPassword(passwordEncoder.encode(newPassword));
         userService.updateUser(user);
 
