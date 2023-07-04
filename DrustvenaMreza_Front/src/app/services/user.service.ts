@@ -12,6 +12,7 @@ export class UserService {
 
   private registerUrl = environment.baseUrl + '/register';
   private apiUrl = environment.baseUrl + '/users';
+  private headers = this.authService.getAuthenticatedHeaders();
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -21,25 +22,21 @@ export class UserService {
 
   getUserProfile(): Observable<User> {
     const url = `${this.apiUrl}/profile`;
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.get<User>(url, { headers, responseType: 'json' });
+    return this.http.get<User>(url, { headers: this.headers });
   }
 
   updateUserProfile(user: User): Observable<void> {
     const url = `${this.apiUrl}/profile`;
-    const headers = this.authService.getAuthenticatedHeaders();
-    const payload = { user };
-    return this.http.put<void>(url, user, { headers, responseType: 'json' });
+    return this.http.put<void>(url, user, { headers: this.headers });
   }
 
   changePassword(userId: number, currentPassword: string, newPassword: string, newPasswordConfirm: string): Observable<void> {
     const url = `${this.apiUrl}/${userId}/change-password`;
-    const headers = this.authService.getAuthenticatedHeaders();
     const body = {
       currentPassword,
       newPassword,
       newPasswordConfirm
     };
-    return this.http.put<void>(url, body, { headers });
+    return this.http.put<void>(url, body, { headers: this.headers });
   }
 }

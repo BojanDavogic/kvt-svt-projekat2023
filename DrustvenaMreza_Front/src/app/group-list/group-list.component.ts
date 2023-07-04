@@ -11,7 +11,7 @@ import { DatePipe } from '@angular/common';
 })
 export class GroupListComponent implements OnInit {
   groups: Group[] = [];
-  group: any;
+  group: Group | undefined;
 
   constructor(private groupService: GroupService) { }
 
@@ -49,7 +49,7 @@ export class GroupListComponent implements OnInit {
 
   showEditPopup: boolean = false;
 
-  openEditPopup(group: any) {
+  openEditPopup(group: Group) {
     this.showEditPopup = true;
     this.group = group;
   }

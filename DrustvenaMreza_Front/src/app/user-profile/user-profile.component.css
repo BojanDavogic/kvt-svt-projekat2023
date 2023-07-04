@@ -65,6 +65,10 @@
   
   .user-profile-details div button {
     color: black;
+    background-color: gold;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 4px;
   }
   
   .user-profile-details input[type="text"],
@@ -77,8 +81,21 @@
     margin-top: 20px;
   }
 
+  .button-group button {
+    height: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 4px;
+  }
+
   .button-group button:first-child {
     margin-right: 10px;
+    background-color: rgb(30, 214, 30);
+  }
+
+  .button-group button:last-child {
+    background-color: red;
   }
   
   .error-message {

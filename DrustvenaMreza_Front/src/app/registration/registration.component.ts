@@ -27,13 +27,13 @@ export class RegistrationComponent implements OnInit {
   password?: string;
   confirmPassword?: string;
   showSuccess: boolean = false;
+  errorMessage: string | null = null;
 
   constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit() {}
 
   register() {
-    // Provera da li forma ispravna
     if (this.isValidForm()) {
       const user = {
         firstName: this.firstname,
@@ -44,12 +44,11 @@ export class RegistrationComponent implements OnInit {
       };
 
       this.userService.registerUser(user).subscribe(
-        () => {
-          // Uspesna registracija - prikazi popup prozor sa porukom
+        (response) => {
           this.showSuccessPopup();
         },
         (error) => {
-          // Greska prilikom registracije - prikazi poruku korisniku
+          this.errorMessage = "Greška prilikom registracije";
           console.error('Greška prilikom registracije:', error);
         }
       );
@@ -57,9 +56,32 @@ export class RegistrationComponent implements OnInit {
   }
 
   private isValidForm() {
-    // Implementirajte logiku za proveru validnosti forme (npr. da li su sva polja popunjena, da li lozinke odgovaraju, itd.)
-    return true; // Vratite true ako je forma ispravna, inace false
+    this.firstname = this.firstname?.trim();
+    this.lastname = this.lastname?.trim();
+    this.username = this.username?.trim();
+    this.email = this.email?.trim();
+    this.password = this.password?.trim();
+    this.confirmPassword = this.confirmPassword?.trim();
+
+    if (!this.firstname || !this.lastname || !this.username || !this.email || !this.password || !this.confirmPassword) {
+      this.errorMessage = 'Sva polja moraju biti popunjena.';
+      return false;
+    }
+  
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Lozinke se ne podudaraju.';
+      return false;
+    }
+
+    if (/\s/.test(this.password)) {
+      this.errorMessage = 'Lozinka ne sme sadržati razmake.';
+      return false;
+    }
+  
+    this.errorMessage = null;
+    return true;
   }
+  
 
   showSuccessPopup() {
     this.showSuccess = true;

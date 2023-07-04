@@ -10,7 +10,6 @@ export interface Group {
   isSuspended: boolean;
   suspendedReason: string;
   isDeleted: boolean;
-  // posts: Post[];
 }
 
 

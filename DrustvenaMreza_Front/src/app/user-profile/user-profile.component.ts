@@ -17,13 +17,13 @@ export class UserProfileComponent implements OnInit {
     lastName: '',
     isDelete: false
   };
+  
   password: string = '';
   isEditingImage: boolean = false;
   isSaving: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
-
-  editingField: string = ''; // Dodali smo novo polje za praćenje uređivanog polja
+  editingField: string = '';
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -46,20 +46,19 @@ export class UserProfileComponent implements OnInit {
     this.isEditingImage = true;
   }
 
-  handleImageChange(event: any): void {
-    // Logika za promenu slike korisnika
+  handleImageChange(event: any): void {  
   }
 
   editField(fieldName: string): void {
     if (fieldName === 'password') {
       this.router.navigate(['change-password']);
     } else {
-      this.editingField = fieldName; // Postavljamo vrednost editingField-a na ime polja koje se uređuje
+      this.editingField = fieldName;
     }
   }
 
   isEditingField(fieldName: string): boolean {
-    return this.editingField === fieldName; // Proveravamo da li je trenutno uređivano polje jednako polju koje se proverava
+    return this.editingField === fieldName;
   }
 
   saveChanges(): void {
@@ -70,7 +69,7 @@ export class UserProfileComponent implements OnInit {
         console.log(response);
         this.getUserProfile();
         this.successMessage = 'Uspesno ste izmenili zeljene podatke.';
-        this.editingField = ''; // Resetujemo vrednost editingField-a
+        this.editingField = '';
       },
       (error) => {
         console.log(error);
@@ -82,6 +81,6 @@ export class UserProfileComponent implements OnInit {
 
   cancelChanges(): void {
     this.getUserProfile();
-    this.editingField = ''; // Resetujemo vrednost editingField-a
+    this.editingField = '';
   }
 }

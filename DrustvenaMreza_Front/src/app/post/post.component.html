@@ -2,16 +2,16 @@
     <div class="post-header">
       <h2>Novi post</h2>
     </div>
-    <div class="post-content">
+    <div class="create-post-content">
       <textarea [(ngModel)]="newPostContent" placeholder="Napišite novi post"></textarea>
     </div>
     <div class="post-actions">
-      <button (click)="createPost()">Objavi</button>
+      <button id="btnObjavi" (click)="createPost()">Objavi</button>
     </div>
   </div>
   <div *ngFor="let post of posts" class="post">
     <div class="post-header">
-      <h2>{{ post.postedBy?.username }}</h2>
+      <h2 id="postCreator">{{ post.postedBy?.username }}</h2>
       <p>{{ post.creationDate }}</p>
       <ng-container *ngIf="!post.isEditing && !post.isUpdating && post.postedBy?.username === currentUser?.sub">
         <button id="btnIzmeni" (click)="startEditing(post)">Izmeni</button>
@@ -27,7 +27,7 @@
       <textarea id="editText" *ngIf="post.isEditing" [(ngModel)]="post.updatedContent"></textarea>
     </div>
     <p class="reactions">
-      Liked by: &nbsp;
+      Sviđa se: &nbsp;
       <ng-container *ngFor="let reaction of post.reactions">
         <ng-container *ngIf="reaction.type === 'LIKE'">
           <p>{{ reaction.madeBy?.username + ", " }}</p>
@@ -36,7 +36,7 @@
     </p>
   
     <p class="reactions">
-      Disliked by: &nbsp; 
+      Ne sviđa se: &nbsp; 
       <ng-container *ngFor="let reaction of post.reactions">
         <ng-container *ngIf="reaction.type === 'DISLIKE'">
           <p>{{ reaction.madeBy?.username + ", "}}</p>
@@ -45,7 +45,7 @@
     </p>
   
     <p class="reactions">
-      Loved by: &nbsp;
+      Voli: &nbsp;
       <ng-container *ngFor="let reaction of post.reactions">
         <ng-container *ngIf="reaction.type === 'HEART'">
           <p>{{ reaction.madeBy?.username + ", " }}</p>
@@ -53,14 +53,14 @@
       </ng-container>
     </p>
     <div class="post-actions">
-      <button (click)="likePost(post.id)" class="like-button" [ngStyle]="{ 'background-color': isLiked(post) ? 'aqua' : 'whitesmoke' }">Like</button>
-      <button (click)="dislikePost(post.id)" class="dislike-button" [ngStyle]="{ 'background-color': isDisliked(post) ? 'green' : 'whitesmoke' }">Dislike</button>
-      <button (click)="heartPost(post.id)" class="heart-button" [ngStyle]="{ 'background-color': isHearted(post) ? 'red' : 'whitesmoke' }">Heart</button>
-      <button (click)="openComments(post)">Comments</button>
+      <button (click)="likePost(post.id)" class="like-button" [ngStyle]="{ 'background-color': isLiked(post) ? 'aqua' : 'whitesmoke' }">Sviđa mi se</button>
+      <button (click)="dislikePost(post.id)" class="dislike-button" [ngStyle]="{ 'background-color': isDisliked(post) ? 'green' : 'whitesmoke' }">Ne sviđa mi se</button>
+      <button (click)="heartPost(post.id)" class="heart-button" [ngStyle]="{ 'background-color': isHearted(post) ? 'red' : 'whitesmoke' }">Volim</button>
+      <button (click)="openComments(post)">Komentari</button>
     </div>
     <div class="comments" *ngIf="post.showComments">
       <div class="comment" *ngFor="let comment of post.comments">
-        <p>{{ comment.user?.username }}</p>
+        <p id="commentCreator">{{ comment.user?.username }}</p>
         <ng-container *ngIf="!comment.isEditing">
           <p>{{ comment.text }}</p>
         </ng-container>
@@ -70,11 +70,11 @@
           <button class="buttonComment" (click)="cancelEditComment(comment)">Otkaži</button>
         </ng-container>
         <p id="commentTimestamp">{{ comment.timestamp }}</p>
-        <button class="buttonComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="editComment(comment)">Izmeni</button>
-        <button class="buttonComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="deleteComment(post, comment.id)">Obriši</button>
+        <button class="buttonComment" id="btnEditComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="editComment(comment)">Izmeni</button>
+        <button class="buttonComment" id="btnDeleteComment" *ngIf="!comment.isEditing && comment.user?.username === currentUser?.sub" (click)="deleteComment(post, comment.id)">Obriši</button>
         <br>
         <p class="comment-reactions">
-          Liked by: &nbsp;
+          Sviđa se: &nbsp;
           <ng-container *ngFor="let reaction of comment.reactions">
             <ng-container *ngIf="reaction.type === 'LIKE'">
               <p>{{ reaction.madeBy?.username + ", "  }}</p>
@@ -83,7 +83,7 @@
         </p>
     
         <p class="comment-reactions">
-          Disliked by: &nbsp;
+          Ne sviđa se: &nbsp;
           <ng-container *ngFor="let reaction of comment.reactions">
             <ng-container *ngIf="reaction.type === 'DISLIKE'">
               <p>{{ reaction.madeBy?.username + ", "  }}</p>
@@ -92,7 +92,7 @@
         </p>
     
         <p class="comment-reactions">
-          Loved by: &nbsp;
+          Voli: &nbsp;
           <ng-container *ngFor="let reaction of comment.reactions">
             <ng-container *ngIf="reaction.type === 'HEART'">
               <p>{{ reaction.madeBy?.username + ", "  }}</p>
@@ -100,15 +100,15 @@
           </ng-container>
         </p>
         <div class="comment-reactions">
-          <button (click)="likeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isLikedComment(comment) ? 'aqua' : 'whitesmoke' }">Like</button>
-          <button (click)="dislikeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isDislikedComment(comment) ? 'green' : 'whitesmoke' }">Dislike</button>
-          <button (click)="heartComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isHeartedComment(comment) ? 'red' : 'whitesmoke' }">Heart</button>
+          <button (click)="likeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isLikedComment(comment) ? 'aqua' : 'whitesmoke' }">Sviđa mi se</button>
+          <button (click)="dislikeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isDislikedComment(comment) ? 'green' : 'whitesmoke' }">Ne sviđa mi se</button>
+          <button (click)="heartComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isHeartedComment(comment) ? 'red' : 'whitesmoke' }">Volim</button>
         </div>
         <hr>
       </div>
       <form (submit)="addComment(post.id, commentInput)">
-        <input id="commentInput" type="text" placeholder="Write a comment" name="commentInput" [(ngModel)]="commentInput">
-        <button id="btnAddComment" type="submit">Add Comment</button>
+        <input id="commentInput" type="text" placeholder="Napišite komentar" name="commentInput" [(ngModel)]="commentInput">
+        <button id="btnAddComment" type="submit">Dodaj komentar</button>
       </form>
     </div>
     

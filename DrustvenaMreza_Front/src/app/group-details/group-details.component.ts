@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Post, Reaction, Comment } from '../model/post.model';
 import { PostService } from '../services/post.service';
 import { AuthService } from '../services/auth.service';
+import { Group } from '../model/group.model';
+import { User } from '../model/user.model';
 
 @Component({
   selector: 'app-group-details',
@@ -11,14 +13,14 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./group-details.component.css']
 })
 export class GroupDetailsComponent implements OnInit {
-  groupId: any;
-  group: any;
+  groupId: number | undefined;
+  group: Group | undefined;
 
   posts: Post[] = [];
   comments: Comment[] = [];
   newPostContent: string = '';
   commentInput: string = '';
-  currentUser: any;
+  currentUser!: User;
   selectedButton: string = '';
   buttonColor: string = 'whitesmoke';
 
@@ -30,15 +32,18 @@ export class GroupDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.groupId = params.get('id');
+      const groupIdParam = params.get('id');
+      this.groupId = groupIdParam ? parseInt(groupIdParam, 10) : undefined;
       this.getGroupDetails();
     });
   }
 
   getGroupDetails() {
-    this.groupService.getGroupById(this.groupId).subscribe(data => {
-      this.group = data;
-    });
+    if (this.groupId !== undefined) {
+      this.groupService.getGroupById(this.groupId).subscribe(data => {
+        this.group = data;
+      });
+  }
   }
 
   

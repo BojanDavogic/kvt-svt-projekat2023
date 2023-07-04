@@ -28,7 +28,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm:ss")
+//    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm:ss")
     @Column(nullable = true)
     private LocalDateTime lastLogin;
 
@@ -49,13 +49,13 @@ public class User {
     )
     private List<User> friends;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_groups",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
-    private List<Group> userGroups;
+//    @ManyToMany
+//    @JoinTable(
+//            name = "user_groups",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "group_id")
+//    )
+//    private List<Group> userGroups;
 
     public User(String username) {
     }

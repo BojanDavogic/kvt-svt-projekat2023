@@ -24,6 +24,7 @@
     <label for="confirmPassword">Ponovljena lozinka:</label>
     <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" />
   </div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
   <div class="button-group">
     <button class="register-button" (click)="register()">Registruj se</button>
     <button class="clear-button" (click)="clear()">Obriši</button>

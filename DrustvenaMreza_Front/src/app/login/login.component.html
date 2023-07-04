@@ -15,6 +15,9 @@
         Unesite lozinku
       </div>
     </div>
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
     <div class="button-group">
       <button class="login-button" routerLink="/login" type="submit" [disabled]="form.invalid">Prijavi se</button>
       <button class="clear-button" type="button" (click)="clear()">Obriši</button>

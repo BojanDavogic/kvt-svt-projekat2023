@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LoginComponent implements OnInit {
 	form: FormGroup;
+	errorMessage: string = '';
 
 	constructor(
 		private fb: FormBuilder,
@@ -45,12 +46,11 @@ export class LoginComponent implements OnInit {
 			result => {
 				localStorage.setItem('user', JSON.stringify(result));
 				this.authenticationService.isLoggedIn();
-				// this.toastr.success('Successful login!');
 				this.router.navigate(['home-page']);
 				
 			},
 			error => {
-				// this.toastr.error(error.error);
+				this.errorMessage = 'Pogrešno uneti korisničko ime ili lozinka.';
 				console.error(error);
 			}
 		);

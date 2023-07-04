@@ -4,11 +4,11 @@
       <form>
         <div class="form-group">
           <label for="name">Naziv grupe:</label>
-          <input type="text" id="name" name="name" [(ngModel)]="group.name" required>
+          <input type="text" id="name" name="name" [(ngModel)]="group!.name" required>
         </div>
         <div class="form-group">
           <label for="description">Opis grupe:</label>
-          <textarea id="description" name="description" [(ngModel)]="group.description" required></textarea>
+          <textarea id="description" name="description" [(ngModel)]="group!.description" required></textarea>
         </div>
         <div class="form-actions">
           <button id="btnIzmeni" type="button" (click)="updateGroup()">Izmeni</button>

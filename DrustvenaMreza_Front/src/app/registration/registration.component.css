@@ -82,3 +82,7 @@
   .success-popup h4, .success-popup p {
     color: black;
   }
+
+  .error-message {
+    color: red;
+  }

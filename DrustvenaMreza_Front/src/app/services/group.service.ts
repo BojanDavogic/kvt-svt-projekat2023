@@ -11,39 +11,35 @@ import { AuthService } from './auth.service';
 })
 export class GroupService {
   private apiUrl = environment.baseUrl + '/groups';
+  private headers = this.authService.getAuthenticatedHeaders();
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   getGroupById(groupId: number): Observable<Group> {
     const url = `${this.apiUrl}/${groupId}`;
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.get<Group>(url, { headers });
+    return this.http.get<Group>(url, { headers: this.headers });
   }
   
 
   createGroup(group: Group): Observable<Group> {
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.post<Group>(this.apiUrl, group, { headers });
+    return this.http.post<Group>(this.apiUrl, group, { headers: this.headers });
   }
   
 
   updateGroup(groupId: number, group: Group): Observable<Group> {
     const url = `${this.apiUrl}/${groupId}`;
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.put<Group>(url, group, { headers });
+    return this.http.put<Group>(url, group, { headers: this.headers });
   }
   
 
   deleteGroup(groupId: number): Observable<void> {
     const url = `${this.apiUrl}/${groupId}`;
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.delete<void>(url, { headers });
+    return this.http.delete<void>(url, { headers: this.headers });
   }
   
 
   getAllGroups(): Observable<Group[]> {
-    const headers = this.authService.getAuthenticatedHeaders();
-    return this.http.get<Group[]>(this.apiUrl, { headers, responseType: 'json' });
+    return this.http.get<Group[]>(this.apiUrl, { headers: this.headers });
   }
   
   

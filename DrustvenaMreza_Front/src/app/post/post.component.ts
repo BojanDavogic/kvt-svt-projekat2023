@@ -18,14 +18,13 @@ export class PostComponent implements OnInit {
   comments: Comment[] = [];
   newPostContent: string = '';
   commentInput: string = '';
-  currentUser: any;
+  currentUser!: User | null;
   selectedButton: string = '';
   buttonColor: string = 'whitesmoke';
 
   constructor(private postService: PostService, private authService: AuthService) {}
 
   ngOnInit() {
-    console.log(this.group)
     this.currentUser = this.authService.getCurrentUser();
     this.loadPosts();
   }
@@ -82,7 +81,6 @@ export class PostComponent implements OnInit {
 
     getAllPostsRequest.subscribe(
       posts => {
-        console.log(posts);
         this.posts = posts;
         for (const post of this.posts) {
           post.reactions = [];
@@ -100,7 +98,6 @@ export class PostComponent implements OnInit {
           }
         });
         this.posts.reverse();
-        console.log(this.posts);
       },
       error => {
         console.error('Greška prilikom preuzimanja postova:', error);
@@ -436,7 +433,7 @@ export class PostComponent implements OnInit {
       const comment = post.comments.find(c => c.id === commentId);
       if (comment) {
         // Provera da li korisnik već ima reakciju na komentar
-        const userReaction = comment.reactions.find(r => r.madeBy?.username === this.currentUser.sub);
+        const userReaction = comment.reactions.find(r => r.madeBy?.username === currentUser.sub);
         
         if (userReaction) {
           if(userReaction.type === reaction){

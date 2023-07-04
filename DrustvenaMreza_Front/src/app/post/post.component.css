@@ -5,7 +5,7 @@
   margin-right: auto;
   margin-bottom: 20px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 3px solid #ccc;
 }
 
 .post-card .post-header {
@@ -15,8 +15,13 @@
   margin-bottom: 10px;
 }
 
-.post-card .post-content textarea {
-  width: 100%;
+.create-post-content {
+  width: 500px;
+  text-align: center;
+}
+
+.create-post-content textarea {
+  width: 99%;
   height: 100px;
   resize: none;
   color: black;
@@ -32,6 +37,13 @@
   color: black;
 }
 
+#btnObjavi {
+  width: 60px;
+  height: 20px;
+  background-color: rgb(0, 255, 0);
+  font-weight: bold;
+}
+
 .post {
     background-color: rgb(9, 30, 30);
     width: 500px;
@@ -39,7 +51,7 @@
     margin-right: auto;
     margin-bottom: 20px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 3px solid #ccc;
     position: relative;
   }
   
@@ -48,6 +60,13 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+  }
+
+  .post-content {
+    background-color: black;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid whitesmoke;
   }
 
   .post-header p {
@@ -66,10 +85,19 @@
     height: 100px;
   }
 
+  #btnIzmeni, #btnEditComment {
+    background-color: gold;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 2px;
+  }
+
   #btnIzmeni, #btnOtkazi, #btnPotvrdi {
     color: black;
     margin-top: 14px;
     cursor: pointer;
+    border: 2px solid black;
+    border-radius: 2px;
   }
 
   #btnObrisi {
@@ -82,6 +110,15 @@
     background-color: rgba(255, 0, 0, 0.614);
     cursor: pointer;
     border-color: white;
+    border-radius: 2px;
+  }
+
+  #btnDeleteComment {
+    background-color: rgba(255, 0, 0, 0.614);
+    cursor: pointer;
+    border: 2px solid white;
+    color: white;
+    border-radius: 2px;
   }
 
   #btnOtkazi {
@@ -108,10 +145,11 @@
   }
   
   .comments {
+    padding: 10px;
     margin-top: 10px;
     padding: 10px;
-    border-top: 1px solid #ccc;
-    background-color: rgba(200, 255, 0, 0.142);
+    border: 2px solid #ccc;
+    background-color: rgba(110, 62, 0, 0.614);
   }
 
   #commentInput {
@@ -125,10 +163,12 @@
 
   #btnAddComment {
     background-color: rgba(0, 94, 225, 0.505);
-    border-color: white;
+    border: 2px solid white;
     margin-left: 10px;
     border-radius: 2px;
     cursor: pointer;
+    color: white;
+    font-weight: bold;
   }
 
   #commentTimestamp {
@@ -154,11 +194,29 @@
 
   .comment-reactions button {
     color: black;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 2px solid black;
+    margin: 10px;
+    margin-left: 0px;
+    font-weight: bold;
   }
 
   .comment-reactions, .reactions {
     display: flex;
     flex-direction: row;
   }
-  
 
+  button {
+    font-weight: bold;
+  }
+  
+#commentCreator {
+  font-weight: bold;
+  font-size: 18px;
+  color: greenyellow;
+}
+
+#postCreator {
+  color: greenyellow;
+}
