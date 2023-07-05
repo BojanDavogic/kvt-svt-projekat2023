@@ -103,8 +103,61 @@
           <button (click)="likeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isLikedComment(comment) ? 'aqua' : 'whitesmoke' }">Sviđa mi se</button>
           <button (click)="dislikeComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isDislikedComment(comment) ? 'green' : 'whitesmoke' }">Ne sviđa mi se</button>
           <button (click)="heartComment(post.id, comment.id)" class="reaction-button" [ngStyle]="{ 'background-color': isHeartedComment(comment) ? 'red' : 'whitesmoke' }">Volim</button>
+          <button style="color: black;" (click)="openReplies(comment)">Odgovori</button>
         </div>
         <hr>
+  <div class="replies">
+    <div class="reply" *ngFor="let reply of comment.replies">
+      <p style="color: gray;">Odgovor na: {{ comment.text }}</p>
+      <p id="replyCreator">{{ reply.user?.username }}</p>
+      <ng-container *ngIf="!reply.isEditing">
+        <p>{{ reply.text }}</p>
+      </ng-container>
+      <ng-container *ngIf="reply.isEditing">
+        <textarea id="editReply" style="resize: none;" [(ngModel)]="reply.updatedText"></textarea>
+        <!-- <button class="buttonComment" (click)="updateReply(post, comment.id, reply.id, reply)">Sačuvaj</button>
+        <button class="buttonComment" (click)="cancelEditReply(reply)">Otkaži</button> -->
+      </ng-container>
+      <p id="replyTimestamp">{{ reply.timestamp }}</p>
+      <!-- <button class="buttonComment" id="btnEditReply" *ngIf="!reply.isEditing && reply.user?.username === currentUser?.sub" (click)="editReply(reply)">Izmeni</button> -->
+      <br>
+      <p class="reply-reactions">
+        Sviđa se: &nbsp;
+        <ng-container *ngFor="let reaction of reply.reactions">
+          <ng-container *ngIf="reaction.type === 'LIKE'">
+            <p>{{ reaction.madeBy?.username + ", " }}</p>
+          </ng-container>
+        </ng-container>
+      </p>
+      <p class="reply-reactions">
+        Ne sviđa se: &nbsp;
+        <ng-container *ngFor="let reaction of reply.reactions">
+          <ng-container *ngIf="reaction.type === 'DISLIKE'">
+            <p>{{ reaction.madeBy?.username + ", "  }}</p>
+          </ng-container>
+        </ng-container>
+      </p>
+  
+      <p class="reply-reactions">
+        Voli: &nbsp;
+        <ng-container *ngFor="let reaction of reply.reactions">
+          <ng-container *ngIf="reaction.type === 'HEART'">
+            <p>{{ reaction.madeBy?.username + ", "  }}</p>
+          </ng-container>
+        </ng-container>
+      </p>
+      <div class="reply-reactions">
+        <button class="reaction-button">Sviđa mi se</button>
+        <button class="reaction-button">Ne sviđa mi se</button>
+        <button class="reaction-button">Volim</button>
+      </div>
+      <!-- <button class="buttonComment" id="btnDeleteReply" *ngIf="!reply.isEditing && reply.user?.username === currentUser?.sub">Obriši</button> -->
+    </div>
+    <form (submit)="addReply(post, comment.id, replyInput)">
+      <input id="replyInput" type="text" placeholder="Napišite odgovor" name="replyInput" [(ngModel)]="replyInput">
+      <button id="replyAdd" type="submit">Dodaj odgovor</button>
+    </form>
+  </div>
       </div>
       <form (submit)="addComment(post.id, commentInput)">
         <input id="commentInput" type="text" placeholder="Napišite komentar" name="commentInput" [(ngModel)]="commentInput">

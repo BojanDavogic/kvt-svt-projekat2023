@@ -21,6 +21,8 @@ export class PostComponent implements OnInit {
   currentUser!: User | null;
   selectedButton: string = '';
   buttonColor: string = 'whitesmoke';
+  replyInput: any;
+  replies: any;
 
   constructor(private postService: PostService, private authService: AuthService) {}
 
@@ -90,7 +92,6 @@ export class PostComponent implements OnInit {
           this.loadReactions(post.id);
         }
         this.posts.sort((a, b) => {
-          // Provera da li je creationDate definisano pre sortiranja
           if (a.creationDate && b.creationDate) {
             return new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime();
           } else {
@@ -135,7 +136,6 @@ export class PostComponent implements OnInit {
       },
       error => {
         console.error('Greška prilikom ažuriranja posta:', error);
-        // Poništi ažuriranje i vrati originalni sadržaj i datum
         post.content = post.updatedContent;
         
         post.isEditing = true;
@@ -171,20 +171,18 @@ export class PostComponent implements OnInit {
       const existingReaction = post.reactions.find(r => r.madeBy?.username === currentUser.sub);
   
       if (existingReaction) {
-        // Korisnik već ima reakciju na objavu
-        if (existingReaction.type === reaction) {
-          // Korisnik je već reagovao sa istom reakcijom, treba je ukloniti
+        if (existingReaction.type === reaction) {          
           this.postService.deleteReaction(existingReaction.id).subscribe(() => {
             this.loadReactions(post.id);
           });
         } else {
-          // Korisnik ima prethodnu reakciju, treba je ažurirati sa novom reakcijom
+          
           this.postService.updateReaction(existingReaction.id, reaction).subscribe(() => {
             this.loadReactions(post.id);
           });
         }
       } else {
-        // Korisnik nema prethodnu reakciju, treba dodati novu reakciju na objavu
+        
         const newReaction: Reaction = {
           type: reaction,
           madeBy: currentUser
@@ -265,7 +263,6 @@ export class PostComponent implements OnInit {
 
   getCommentById(postId: number, commentId: number): Comment | undefined {
     const post = this.getPostById(postId);
-    // post = this.posts.find(post => post.id === postId);
     return post?.comments.find(comment => comment.id === commentId);
   }
   
@@ -293,7 +290,6 @@ export class PostComponent implements OnInit {
   loadCommentReactions(postId: number, commentId: number) {
     this.postService.getReactionsForComment(commentId).subscribe(
       reactions => {
-        // const comment = this.comments.find(p => p.id === commentId);
         const comment = this.getCommentById(postId, commentId);
         if (comment) {
           comment.reactions = reactions;
@@ -328,7 +324,7 @@ export class PostComponent implements OnInit {
           post.comments = comments.map(comment => {
             return {
               ...comment,
-              timestamp: comment.timestamp // Ažurirajte polje timestamp
+              timestamp: comment.timestamp
             };
           });
         },
@@ -352,7 +348,9 @@ export class PostComponent implements OnInit {
         text: commentContent,
         updatedText: '',
         isUpdating: false,
-        reactions: []
+        reactions: [],
+        replies: [],
+        showReplies: false
       };
       this.postService.addComment(post.id, newComment).subscribe(
         createdComment => {
@@ -432,7 +430,6 @@ export class PostComponent implements OnInit {
       }
       const comment = post.comments.find(c => c.id === commentId);
       if (comment) {
-        // Provera da li korisnik već ima reakciju na komentar
         const userReaction = comment.reactions.find(r => r.madeBy?.username === currentUser.sub);
         
         if (userReaction) {
@@ -457,7 +454,6 @@ export class PostComponent implements OnInit {
               this.loadCommentReactions(post.id, comment.id);
             },
             error => {
-              // Greška pri dodavanju reakcije
               console.error('Greška pri dodavanju reakcije na komentar', error);
             }
           );
@@ -516,4 +512,95 @@ export class PostComponent implements OnInit {
       this.loadCommentReactions(postId, comment.id);
     }
   }
+
+  replyToComment(post: Post, commentId: number, replyText: string) {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      console.error('Nepoznat ulogovani korisnik.');
+      return;
+    }
+  
+    const comment = post.comments.find(c => c.id === commentId);
+    if (!comment) {
+      console.error('Nepoznat komentar.');
+      return;
+    }
+  
+    const newReply: Comment = {
+      text: replyText,
+      user: currentUser,
+      isEditing: false,
+      isUpdating: false,
+      updatedText: '',
+      reactions: [],
+      replies: [],
+      showReplies: false
+    };
+  
+    this.postService.addReply(post.id, commentId, newReply).subscribe(
+      createdReply => {
+        comment.replies.push(createdReply);
+        console.log('Novi odgovor:', createdReply);
+      },
+      error => {
+        console.error('Greška prilikom dodavanja odgovora:', error);
+      }
+    );
+  }
+
+  addReply(post: Post, commentId: number, replyInput: string) {
+    if (!replyInput.trim()) {
+      return;
+    }
+  
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      console.error('Nepoznat ulogovani korisnik.');
+      return;
+    }
+  
+    const comment = post.comments.find(c => c.id === commentId);
+    if (!comment) {
+      console.error('Nepoznat komentar.');
+      return;
+    }
+  
+    const newReply: Comment = {
+      text: replyInput,
+      user: currentUser,
+      isEditing: false,
+      isUpdating: false,
+      updatedText: '',
+      reactions: [],
+      replies: [],
+      showReplies: false
+    };
+  
+    this.replyToComment(post, commentId, newReply.text);
+    this.replyInput = '';
+  }
+
+  openReplies(comment: Comment) {
+    if(comment) {
+      comment.showReplies = !comment.showReplies;
+      if (comment.showReplies) {
+        this.loadRepliesForComment(comment);
+        comment.showReplies = true;
+      }
+    }
+  }
+  
+  loadRepliesForComment(comment: Comment) {
+    if (comment) {
+      this.postService.getRepliesForComment(comment.id).subscribe(
+        replies => {
+          comment.replies = replies;
+        },
+        error => {
+          console.error('Greška prilikom preuzimanja komentara:', error);
+        }
+      );
+    }
+  }
+  
 }

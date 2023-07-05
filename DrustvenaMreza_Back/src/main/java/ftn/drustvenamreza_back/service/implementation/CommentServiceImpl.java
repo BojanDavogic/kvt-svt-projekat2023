@@ -1,15 +1,14 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.config.NotFoundException;
 import ftn.drustvenamreza_back.model.entity.Comment;
 import ftn.drustvenamreza_back.model.entity.Post;
 import ftn.drustvenamreza_back.model.entity.User;
 import ftn.drustvenamreza_back.repository.CommentRepository;
-import ftn.drustvenamreza_back.repository.PostRepository;
 import ftn.drustvenamreza_back.service.CommentService;
 import ftn.drustvenamreza_back.service.PostService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 @Service
@@ -32,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> getCommentsForPost(Long postId) {
-        return commentRepository.findByPostIdAndIsDeletedFalse(postId);
+        return commentRepository.findByPostIdAndParentCommentIsNullAndIsDeletedFalse(postId);
     }
 
     @Override
@@ -56,4 +55,33 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.save(comment);
         }
     }
+
+    @Override
+    public Comment addReplyToComment(Long commentId, Comment reply, User user) {
+        Comment parentComment = getCommentById(commentId);
+        if (parentComment == null) {
+            throw new NotFoundException("Komentar nije pronađen.");
+        }
+
+        Post post = parentComment.getPost();
+        if (post == null) {
+            throw new NotFoundException("Post nije pronađen.");
+        }
+
+        reply.setUser(user);
+        reply.setPost(post);
+        reply.setParentComment(parentComment);
+        reply.setTimestamp(LocalDateTime.now());
+
+        return commentRepository.save(reply);
+    }
+
+    @Override
+    public List<Comment> getRepliesForComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Komentar nije pronađen."));
+
+        return commentRepository.findByParentCommentAndIsDeletedFalse(comment);
+    }
+
 }

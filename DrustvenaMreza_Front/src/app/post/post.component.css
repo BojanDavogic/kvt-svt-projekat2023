@@ -149,7 +149,7 @@
     margin-top: 10px;
     padding: 10px;
     border: 2px solid #ccc;
-    background-color: rgba(110, 62, 0, 0.614);
+    background-color: transparent;
   }
 
   #commentInput {
@@ -157,8 +157,11 @@
   }
   
   .comment {
-    margin-bottom: 5px;
+    background-color: rgba(110, 62, 0, 0.614);
+    margin-bottom: 20px;
     position: relative;
+    border: 2px solid black;
+    padding: 5px;
   }
 
   #btnAddComment {
@@ -173,8 +176,8 @@
 
   #commentTimestamp {
     position: absolute;
-    right: 0;
-    bottom: 0;
+    right: 70px;
+    top: 2px;
   }
 
   #editComment {
@@ -198,7 +201,6 @@
     border-radius: 2px;
     border: 2px solid black;
     margin: 10px;
-    margin-left: 0px;
     font-weight: bold;
   }
 
@@ -219,4 +221,25 @@
 
 #postCreator {
   color: greenyellow;
+}
+
+.replies {
+  margin-top: 10px;
+}
+
+#replyAdd {
+  cursor: pointer;
+  background-color: black;
+  border-radius: 2px;
+  border: 2px solid black;
+  margin-left: 10px;
+}
+
+#replyInput {
+  color: black;
+}
+
+.reaction-button {
+  color: black;
+  margin: 10px;
 }

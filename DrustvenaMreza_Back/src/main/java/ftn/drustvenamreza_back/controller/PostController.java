@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.controller;
 
+import ftn.drustvenamreza_back.config.NotFoundException;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.service.implementation.*;
 import org.springframework.http.ResponseEntity;
@@ -237,5 +238,18 @@ public class PostController {
         }
         reactionService.deleteCommentReaction(commentId, reactionId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/posts/comments/{commentId}/replies")
+    public ResponseEntity<Comment> addReplyToComment(@PathVariable Long commentId, @RequestBody Comment reply) {
+        User user = userService.getCurrentUser();
+        Comment addedReply = commentService.addReplyToComment(commentId, reply, user);
+        return ResponseEntity.ok(addedReply);
+    }
+
+    @GetMapping("/posts/comments/{commentId}/replies")
+    public ResponseEntity<List<Comment>> getRepliesForComment(@PathVariable Long commentId) {
+        List<Comment> replies = commentService.getRepliesForComment(commentId);
+        return ResponseEntity.ok(replies);
     }
 }

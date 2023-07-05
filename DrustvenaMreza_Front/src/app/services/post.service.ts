@@ -115,4 +115,14 @@ export class PostService {
     return this.http.delete<void>(url, { headers: this.headers });
   }
 
+  addReply(postId: number, commentId: number, reply: Comment): Observable<Comment> {
+    const url = `${this.apiUrl}/comments/${commentId}/replies`;
+    return this.http.post<Comment>(url, reply, { headers: this.headers });
+  }
+
+  getRepliesForComment(commentId: number): Observable<Comment[]> {
+    const url = `${this.apiUrl}/comments/${commentId}/replies`;
+    return this.http.get<Comment[]>(url, { headers: this.headers });
+  }
+
 }

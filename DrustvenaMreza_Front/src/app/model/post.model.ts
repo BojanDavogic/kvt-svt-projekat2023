@@ -7,10 +7,10 @@ export interface Post {
     creationDate?: Date;
     content: string;
     isDeleted?: boolean;
-    isEditing: boolean; // Stanje izmjene sadržaja
-    updatedContent: string; // Ažurirani sadržaj
-    isUpdating: boolean; // Stanje ažuriranja
-    showComments: boolean; // Stanje
+    isEditing: boolean;
+    updatedContent: string;
+    isUpdating: boolean;
+    showComments: boolean;
     comments: Comment[];
     reactions: Reaction[];
     selectedReactions: [];
@@ -26,6 +26,8 @@ export interface Comment {
     updatedText: string;
     isUpdating: boolean;
     reactions: Reaction[];
+    showReplies: boolean;
+    replies: Comment[];
 }
 
 export interface Reaction {

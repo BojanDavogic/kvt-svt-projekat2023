@@ -12,4 +12,7 @@ public interface CommentService {
     Comment getCommentById(Long commentId);
     Comment updateComment(Long commentId, Comment updatedComment);
     void deleteComment(Long commentId);
+
+    Comment addReplyToComment(Long commentId, Comment reply, User user);
+    List<Comment> getRepliesForComment(Long commentId);
 }
