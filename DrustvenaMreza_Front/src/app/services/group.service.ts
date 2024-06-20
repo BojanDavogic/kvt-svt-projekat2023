@@ -42,5 +42,8 @@ export class GroupService {
     return this.http.get<Group[]>(this.apiUrl, { headers: this.headers });
   }
   
+  searchGroups(searchTerm: string): Observable<Group[]> {
+    return this.http.get<Group[]>(`${this.apiUrl}/search?term=${searchTerm}`, { headers: this.headers });
+  }  
   
 }

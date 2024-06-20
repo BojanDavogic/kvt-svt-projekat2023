@@ -66,4 +66,24 @@ export class GroupListComponent implements OnInit {
     this.showPopup = false;
   }
 
+  searchTerm: string = '';
+
+searchGroups() {
+  if (this.searchTerm.trim() === '') {
+    // Ako je polje za pretragu prazno, prikaži sve grupe
+    this.loadGroups();
+  } else {
+    // Inače, pretraži grupe prema unetom pojmu
+    this.groupService.searchGroups(this.searchTerm).subscribe(
+      groups => {
+        this.groups = groups;
+        console.log('Rezultati pretrage:', this.groups);
+      },
+      error => {
+        console.error('Greška prilikom pretrage grupa:', error);
+      }
+    );
+  }
+}
+
 }

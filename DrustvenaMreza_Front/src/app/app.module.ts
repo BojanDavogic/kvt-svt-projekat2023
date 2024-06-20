@@ -22,6 +22,7 @@ import { PostService } from './services/post.service';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ToastrModule } from 'ngx-toastr';
+import { SearchPostsComponent } from './search-posts/search-posts.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { ToastrModule } from 'ngx-toastr';
     EditGroupPopupComponent,
     PostComponent,
     UserProfileComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    SearchPostsComponent
   ],
   imports: [
     BrowserModule,

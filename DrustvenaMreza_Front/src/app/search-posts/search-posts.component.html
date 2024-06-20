@@ -1,0 +1,38 @@
+<div class="container">
+<h2>Pretraga objava</h2>
+<form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <div>
+      <label for="title">Naslov</label>
+      <input id="title" formControlName="title" type="text">
+    </div>
+    <div>
+      <label for="text">Tekst</label>
+      <input id="text" formControlName="text" type="text">
+    </div>
+    <div>
+      <label for="pdfContent">PDF sadržaj</label>
+      <input id="pdfContent" formControlName="pdfContent" type="text">
+    </div>
+    <div>
+      <label for="comments">Komentari</label>
+      <input id="comments" formControlName="comments" type="text">
+    </div>
+    <div>
+      <label for="likesMin">Min. sviđanja</label>
+      <input id="likesMin" formControlName="likesMin" type="number">
+    </div>
+    <div>
+      <label for="likesMax">Max. sviđanja</label>
+      <input id="likesMax" formControlName="likesMax" type="number">
+    </div>
+    <button type="submit">Search</button>
+  </form>
+</div>
+  
+  <div *ngIf="results.length">
+    <div *ngFor="let result of results">
+      <h3>{{ result.title }}</h3>
+      <p [innerHTML]="result.highlight.text"></p>
+    </div>
+  </div>
+  

@@ -1,5 +1,11 @@
 <div class="container">
+  <div class="search-form">
+    <input type="text" placeholder="Pretraži grupe po nazivu" [(ngModel)]="searchTerm" (input)="searchGroups()">
+  </div>  
     <h1 class="group-header">Sve grupe:</h1>
+    <div *ngIf="groups.length === 0" class="no-results">
+      Nema rezultata pretrage.
+    </div>
     <div class="group-card" *ngFor="let group of groups">
       <a [routerLink]="['/groups', group.id]">
         <div>
