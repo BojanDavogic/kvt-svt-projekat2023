@@ -112,28 +112,3 @@
   background-color: rgb(166, 26, 26);
   color: white;
 }
-
-.search-form {
-  margin-bottom: 20px;
-}
-
-.search-form input {
-  padding: 10px;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #000000;
-}
-
-.search-form input:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.no-results {
-  text-align: center;
-  font-size: 18px;
-  color: #b2b2b2;
-  margin-top: 20px;
-}

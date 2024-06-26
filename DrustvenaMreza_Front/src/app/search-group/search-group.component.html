@@ -1,0 +1,35 @@
+<div class="container">
+    <h2>Pretraga grupa</h2>
+    <form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+      <div>
+        <label for="name">Naziv</label>
+        <input id="name" formControlName="name" type="text">
+      </div>
+      <div>
+        <label for="description">Opis</label>
+        <input id="description" formControlName="description" type="text">
+      </div>
+      <div>
+        <label for="pdfContent">PDF sadržaj</label>
+        <input id="pdfContent" formControlName="pdfContent" type="text">
+      </div>
+      <div>
+        <label for="postsMin">Min broj objava</label>
+        <input id="postsMin" formControlName="postsMin" type="number" min="0">
+      </div>
+      <div>
+        <label for="postsMax">Max broj objava</label>
+        <input id="postsMax" formControlName="postsMax" type="number" min="0">
+      </div>
+      <div>
+        <label for="avgLikesMin">Min prosečan broj lajkova</label>
+        <input id="avgLikesMin" formControlName="avgLikesMin" type="number" min="0">
+      </div>
+      <div>
+        <label for="avgLikesMax">Max prosečan broj lajkova</label>
+        <input id="avgLikesMax" formControlName="avgLikesMax" type="number" min="0">
+      </div>
+      <button type="submit">Pretraži</button>
+    </form>
+  </div>
+  

@@ -1,22 +1,22 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.indexrepository.GroupElasticsearch;
 import ftn.drustvenamreza_back.model.dto.GroupDTO;
 import ftn.drustvenamreza_back.model.entity.*;
+import ftn.drustvenamreza_back.indexrepository.GroupElasticsearchRepository;
 import ftn.drustvenamreza_back.repository.GroupRepository;
 import ftn.drustvenamreza_back.service.GroupService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
-
-    public GroupServiceImpl(GroupRepository groupRepository) {
-        this.groupRepository = groupRepository;
-    }
+    private final GroupElasticsearchRepository groupElasticsearchRepository;
 
     public List<Group> getAllGroups() {
         return groupRepository.findByIsDeletedFalse();
@@ -24,9 +24,16 @@ public class GroupServiceImpl implements GroupService {
 
     public Group createGroup(Group group, User creator) {
         group.setCreationDate(LocalDateTime.now());
-//        GroupAdmin groupAdmin = new GroupAdmin(creator);
-//        group.getGroupAdmins().add(groupAdmin);
-        return groupRepository.save(group);
+        Group savedGroup = groupRepository.save(group);
+
+        // Indeksiraj grupu u Elasticsearch
+        GroupElasticsearch groupElasticsearch = new GroupElasticsearch();
+        groupElasticsearch.setId(savedGroup.getId());
+        groupElasticsearch.setName(savedGroup.getName());
+        groupElasticsearch.setDescription(savedGroup.getDescription());
+        groupElasticsearchRepository.save(groupElasticsearch);
+
+        return savedGroup;
     }
 
     public Group getGroupById(Long groupId) {

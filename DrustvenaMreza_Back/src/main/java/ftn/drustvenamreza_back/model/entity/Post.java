@@ -36,6 +36,9 @@ public class Post {
     @JoinColumn(name = "group_id")
     private Group group;
 
+//    @Column(nullable = true)
+//    private String fileName;
+
 //    @OneToMany(mappedBy = "post")
 //    private List<Image> images;
 //

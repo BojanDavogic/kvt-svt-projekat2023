@@ -1,7 +1,5 @@
 <div class="container">
-  <div class="search-form">
-    <input type="text" placeholder="Pretraži grupe po nazivu" [(ngModel)]="searchTerm" (input)="searchGroups()">
-  </div>  
+  <app-search-group (searchResults)="updateGroups($event)"></app-search-group>
     <h1 class="group-header">Sve grupe:</h1>
     <div *ngIf="groups.length === 0" class="no-results">
       Nema rezultata pretrage.

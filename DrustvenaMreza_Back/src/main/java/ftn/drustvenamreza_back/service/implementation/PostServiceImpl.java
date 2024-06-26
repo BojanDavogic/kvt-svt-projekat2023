@@ -1,5 +1,7 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.indexrepository.PostIndexRepository;
+import ftn.drustvenamreza_back.indexservice.PostIndexService;
 import ftn.drustvenamreza_back.model.entity.Comment;
 import ftn.drustvenamreza_back.model.entity.Group;
 import ftn.drustvenamreza_back.model.entity.Post;
@@ -19,11 +21,13 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserServiceImpl userService;
     private final CommentRepository commentRepository;
+    private final PostIndexService postIndexService;
 
-    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, CommentRepository commentRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, CommentRepository commentRepository, PostIndexService postIndexService) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.commentRepository = commentRepository;
+        this.postIndexService = postIndexService;
     }
 
     public Post createPost(Post post, User user) {
@@ -32,7 +36,9 @@ public class PostServiceImpl implements PostService {
         }
         post.setCreationDate(LocalDateTime.now());
         post.setPostedBy(user);
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        postIndexService.indexPost(savedPost);
+        return savedPost;
     }
 
     @Override
@@ -43,7 +49,9 @@ public class PostServiceImpl implements PostService {
         post.setCreationDate(LocalDateTime.now());
         post.setPostedBy(user);
         post.setGroup(group);
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        postIndexService.indexPost(savedPost);
+        return savedPost;
     }
 
     public List<Post> getAllPostsWithoutGroup() {
@@ -73,6 +81,7 @@ public class PostServiceImpl implements PostService {
             existingPost.setContent(updatedContent);
             existingPost.setPostedBy(user);
             postRepository.save(existingPost);
+            postIndexService.indexPost(existingPost);
         }
     }
 
@@ -87,6 +96,7 @@ public class PostServiceImpl implements PostService {
         if (post != null) {
             post.setIsDeleted(true);
             postRepository.save(post);
+            postIndexService.deletePostIndex(postId);
         }
     }
 

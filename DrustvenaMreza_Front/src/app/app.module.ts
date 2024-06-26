@@ -23,6 +23,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ToastrModule } from 'ngx-toastr';
 import { SearchPostsComponent } from './search-posts/search-posts.component';
+import { SearchGroupComponent } from './search-group/search-group.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { SearchPostsComponent } from './search-posts/search-posts.component';
     PostComponent,
     UserProfileComponent,
     ChangePasswordComponent,
-    SearchPostsComponent
+    SearchPostsComponent,
+    SearchGroupComponent
   ],
   imports: [
     BrowserModule,
