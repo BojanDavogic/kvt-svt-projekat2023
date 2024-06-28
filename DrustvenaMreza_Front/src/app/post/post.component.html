@@ -5,6 +5,7 @@
   </div>
   <div class="create-post-content">
     <textarea [(ngModel)]="newPostContent" placeholder="Napišite novi post"></textarea>
+    <input type="file" (change)="onFileSelected($event)" multiple />
   </div>
   <div class="post-actions">
     <button id="btnObjavi" (click)="createPost()">Objavi</button>

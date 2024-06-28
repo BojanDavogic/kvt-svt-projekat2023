@@ -3,8 +3,11 @@ package ftn.drustvenamreza_back.controller;
 import ftn.drustvenamreza_back.config.NotFoundException;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.service.implementation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,11 +28,18 @@ public class PostController {
         this.groupService = groupService;
     }
 
-    @PostMapping("/posts")
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        User user = userService.getCurrentUser();
-        Post createdPost = postService.createPost(post, user);
-        return ResponseEntity.ok(createdPost);
+    @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Post> createPost(@RequestParam("file") MultipartFile file, @RequestPart("post") Post post) {
+        System.out.println("Fajl: " + file.getOriginalFilename());
+        System.out.println("Post: " + post.getContent());
+        try {
+            User user = userService.getCurrentUser();
+            Post createdPost = postService.createPost(post, user, file);
+            return ResponseEntity.ok(createdPost);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @RequestMapping(value = "/groups/{groupId}/posts", method = RequestMethod.POST)

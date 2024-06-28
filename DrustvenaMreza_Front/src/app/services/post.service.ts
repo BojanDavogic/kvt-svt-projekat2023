@@ -20,8 +20,13 @@ export class PostService {
     return this.http.get<Post>(url, { headers: this.headers });
   }
 
-  createPost(post: Post): Observable<Post> {
-    return this.http.post<Post>(this.apiUrl, post, { headers: this.headers });
+  createPost(post: Post, file: File | null): Observable<Post> {
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+    formData.append('post', new Blob([JSON.stringify(post)], { type: 'application/json' }));
+    return this.http.post<Post>(this.apiUrl, formData, { headers: this.headers.delete('Content-Type') });
   }
 
   createGroupPost(groupId: number, post: Post): Observable<Post> {

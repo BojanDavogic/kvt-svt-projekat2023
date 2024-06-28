@@ -1,5 +1,7 @@
 package ftn.drustvenamreza_back.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,5 +37,6 @@ public class Reaction {
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
+    @JsonIgnore
     private Comment comment;
 }

@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDTO {
+    private Long id;
     private String content;
-    private User postedBy;
+    private String creationDate;
+    private Boolean isDeleted;
+    private String postedBy;
+    private String group;
+    private String fileName;
 }

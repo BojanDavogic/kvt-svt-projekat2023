@@ -23,12 +23,14 @@ public class MinioServiceImpl implements MinioService {
         try {
             String fileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
             InputStream inputStream = file.getInputStream();
+            System.out.println("Uploading file: " + fileName + " to bucket: " + bucketName);
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(fileName)
                     .stream(inputStream, file.getSize(), -1)
                     .contentType(file.getContentType())
                     .build());
+            System.out.println("File uploaded successfully: " + fileName);
             return fileName;
         } catch (Exception e) {
             throw new RuntimeException("Error while uploading file to MinIO", e);
@@ -43,6 +45,7 @@ public class MinioServiceImpl implements MinioService {
                     .object(fileName)
                     .build());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Error while downloading file from MinIO", e);
         }
     }

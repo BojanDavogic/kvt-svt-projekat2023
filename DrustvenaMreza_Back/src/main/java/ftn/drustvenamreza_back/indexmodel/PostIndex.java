@@ -18,18 +18,22 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 public class PostIndex {
 
     @Id
-    private String id;
+    private Long id;
 
-    @Field(type = FieldType.Text, store = true, name = "content_sr", analyzer = "serbian", searchAnalyzer = "serbian")
-    private String contentSr;
+    @Field(type = FieldType.Text, store = true, name = "title")
+    private String title;
 
-    @Field(type = FieldType.Text, store = true, name = "content_en", analyzer = "english", searchAnalyzer = "english")
-    private String contentEn;
+    @Field(type = FieldType.Text, store = true, name = "full_content")
+    private String fullContent;
 
-    @Field(type = FieldType.Text, store = true, name = "server_filename", index = false)
-    private String serverFilename;
+    @Field(type = FieldType.Text, store = true, name = "file_content")
+    private String fileContent;
 
-    @Field(type = FieldType.Integer, store = true, name = "database_id")
-    private Integer databaseId;
+    @Field(type = FieldType.Long, store = true, name = "number_of_likes")
+    private Long numberOfLikes;
+
+    @Field(type = FieldType.Text, store = true, name = "comment_content")
+    private String commentContent;
 }
+
 

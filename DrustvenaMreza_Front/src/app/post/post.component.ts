@@ -23,12 +23,17 @@ export class PostComponent implements OnInit {
   buttonColor: string = 'whitesmoke';
   replyInput: any;
   replies: any;
+  selectedFile: File | null = null;
 
   constructor(private postService: PostService, private authService: AuthService) {}
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     this.loadPosts();
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
   }
 
   createPost() {
@@ -58,7 +63,7 @@ export class PostComponent implements OnInit {
     if (this.group) {
       createPostRequest = this.postService.createGroupPost(this.group.id, newPost);
     } else {
-      createPostRequest = this.postService.createPost(newPost);
+      createPostRequest = this.postService.createPost(newPost, this.selectedFile);
     }
 
     createPostRequest.subscribe(
@@ -66,6 +71,7 @@ export class PostComponent implements OnInit {
         this.posts.push(createdPost);
         this.loadPosts();
         this.newPostContent = '';
+        this.selectedFile = null;
       },
       error => {
         console.error('Greška prilikom kreiranja posta:', error);

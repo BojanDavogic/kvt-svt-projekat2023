@@ -21,7 +21,7 @@ public class Post {
 
     @Column(nullable = false)
     private String content;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. hh:mm")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy. HH:mm")
     @Column(nullable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
 
@@ -36,18 +36,8 @@ public class Post {
     @JoinColumn(name = "group_id")
     private Group group;
 
-//    @Column(nullable = true)
-//    private String fileName;
+    @Column(nullable = true)
+    private String fileName;
 
-//    @OneToMany(mappedBy = "post")
-//    private List<Image> images;
-//
-//    @OneToMany(mappedBy = "post")
-//    private List<Report> reports;
-//
-//    @OneToMany(mappedBy = "post")
-//    private List<Reaction> reactions;
-//
-//    @OneToMany(mappedBy = "post")
-//    private List<Comment> comments = new ArrayList<>();
+
 }

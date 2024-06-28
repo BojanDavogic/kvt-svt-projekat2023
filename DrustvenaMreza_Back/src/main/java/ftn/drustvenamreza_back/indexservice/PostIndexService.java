@@ -5,6 +5,8 @@ import ftn.drustvenamreza_back.indexrepository.PostIndexRepository;
 import ftn.drustvenamreza_back.model.entity.Post;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PostIndexService {
     private final PostIndexRepository postIndexRepository;
@@ -13,16 +15,34 @@ public class PostIndexService {
         this.postIndexRepository = postIndexRepository;
     }
 
-    public void indexPost(Post post) {
-        PostIndex postIndex = new PostIndex();
-        postIndex.setId(post.getId().toString());
-        postIndex.setContentSr(post.getContent());  // Assuming content is in Serbian, adjust as needed
-        postIndex.setContentEn(post.getContent());  // Adjust as needed
-        postIndex.setDatabaseId(post.getId().intValue());
+    public void indexPost(PostIndex postIndex) {
         postIndexRepository.save(postIndex);
     }
 
     public void deletePostIndex(Long postId) {
         postIndexRepository.deleteById(postId.toString());
+    }
+
+    public Optional<PostIndex> findById(String postId) {
+        Optional<PostIndex> findedPost = postIndexRepository.findPostIndexById(postId);
+        return findedPost;
+    }
+
+    public void updatePostIndex(PostIndex postIndex) {
+        Optional<PostIndex> existingPostIndexOptional = postIndexRepository.findById(postIndex.getId().toString());
+
+        if (existingPostIndexOptional.isPresent()) {
+            PostIndex existingPostIndex = existingPostIndexOptional.get();
+
+            existingPostIndex.setTitle(postIndex.getTitle());
+            existingPostIndex.setFullContent(postIndex.getFullContent());
+            existingPostIndex.setFileContent(postIndex.getFileContent());
+            existingPostIndex.setNumberOfLikes(postIndex.getNumberOfLikes());
+            existingPostIndex.setCommentContent(postIndex.getCommentContent());
+
+            postIndexRepository.save(existingPostIndex);
+        } else {
+            postIndexRepository.save(postIndex);
+        }
     }
 }
