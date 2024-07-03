@@ -1,38 +1,56 @@
 <div class="container">
-<h2>Pretraga objava</h2>
-<form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <div>
+  <h2>Pretraga objava</h2>
+  <form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <div id="divOption">
+      <label for="type">Tip pretrage</label>
+      <select id="type" formControlName="type">
+        <option value="simple">Jednostavna pretraga</option>
+        <option value="advanced">Napredna pretraga</option>
+      </select>
+    </div>
+
+    <div id="divSimpleField" *ngIf="searchForm.get('type')?.value === 'simple'">
+      <label for="simpleField">Pretraga po</label>
+      <select id="simpleField" formControlName="simpleField">
+        <option value="title">Naslov</option>
+        <option value="text">Tekst</option>
+        <option value="pdfContent">PDF sadržaj</option>
+        <option value="comments">Komentari</option>
+      </select>
+    </div>
+
+    <div *ngIf="searchForm.get('type')?.value === 'simple' && searchForm.get('simpleField')?.value === 'title'">
       <label for="title">Naslov</label>
       <input id="title" formControlName="title" type="text">
     </div>
-    <div>
+    <div *ngIf="searchForm.get('type')?.value === 'simple' && searchForm.get('simpleField')?.value === 'text'">
       <label for="text">Tekst</label>
       <input id="text" formControlName="text" type="text">
     </div>
-    <div>
+    <div *ngIf="searchForm.get('type')?.value === 'simple' && searchForm.get('simpleField')?.value === 'pdfContent'">
       <label for="pdfContent">PDF sadržaj</label>
       <input id="pdfContent" formControlName="pdfContent" type="text">
     </div>
-    <div>
+    <div *ngIf="searchForm.get('type')?.value === 'simple' && searchForm.get('simpleField')?.value === 'comments'">
       <label for="comments">Komentari</label>
       <input id="comments" formControlName="comments" type="text">
     </div>
-    <div>
+
+    <div *ngIf="searchForm.get('type')?.value === 'advanced'">
+      <label for="title">Naslov</label>
+      <input id="title" formControlName="title" type="text">
+      <label for="text">Tekst</label>
+      <input id="text" formControlName="text" type="text">
+      <label for="pdfContent">PDF sadržaj</label>
+      <input id="pdfContent" formControlName="pdfContent" type="text">
+      <label for="comments">Komentari</label>
+      <input id="comments" formControlName="comments" type="text">
       <label for="likesMin">Min. sviđanja</label>
       <input id="likesMin" formControlName="likesMin" type="number" min="0">
-    </div>
-    <div>
       <label for="likesMax">Max. sviđanja</label>
       <input id="likesMax" formControlName="likesMax" type="number" min="0">
     </div>
+    
     <button type="submit">Pretraži</button>
   </form>
 </div>
-  
-  <div *ngIf="results.length">
-    <div *ngFor="let result of results">
-      <h3>{{ result.title }}</h3>
-      <p [innerHTML]="result.highlight.text"></p>
-    </div>
-  </div>
-  

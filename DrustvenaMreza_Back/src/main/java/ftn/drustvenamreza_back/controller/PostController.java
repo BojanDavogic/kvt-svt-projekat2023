@@ -1,8 +1,16 @@
 package ftn.drustvenamreza_back.controller;
 
 import ftn.drustvenamreza_back.config.NotFoundException;
+import ftn.drustvenamreza_back.indexmodel.PostIndex;
+import ftn.drustvenamreza_back.indexservice.IndexingServiceImpl;
+import ftn.drustvenamreza_back.indexservice.PostIndexService;
+import ftn.drustvenamreza_back.indexservice.SearchServiceImpl;
 import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.service.implementation.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class PostController {
     private final PostServiceImpl postService;
@@ -19,22 +29,16 @@ public class PostController {
     private final CommentServiceImpl commentService;
     private final ReactionServiceImpl reactionService;
     private final GroupServiceImpl groupService;
-
-    public PostController(PostServiceImpl postService, UserServiceImpl userService, CommentServiceImpl commentService, ReactionServiceImpl reactionService, GroupServiceImpl groupService) {
-        this.postService = postService;
-        this.userService = userService;
-        this.commentService = commentService;
-        this.reactionService = reactionService;
-        this.groupService = groupService;
-    }
+    private final PostIndexService postIndexService;
+    private final IndexingServiceImpl indexingService;
+    private final SearchServiceImpl searchService;
 
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> createPost(@RequestParam("file") MultipartFile file, @RequestPart("post") Post post) {
-        System.out.println("Fajl: " + file.getOriginalFilename());
-        System.out.println("Post: " + post.getContent());
         try {
             User user = userService.getCurrentUser();
             Post createdPost = postService.createPost(post, user, file);
+            indexingService.indexPost(file, createdPost.getId());
             return ResponseEntity.ok(createdPost);
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,16 +46,20 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "/groups/{groupId}/posts", method = RequestMethod.POST)
-    public ResponseEntity<Post> createGroupPost(@PathVariable Long groupId, @RequestBody Post post) {
-        User user = userService.getCurrentUser();
-        Group group = groupService.getGroupById(groupId);
-        if (group != null) {
-            Post createdPost = postService.createGroupPost(group, post, user);
-            return ResponseEntity.ok(createdPost);
-        } else {
-            return ResponseEntity.notFound().build();
+    @RequestMapping(value = "/groups/{groupId}/posts", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Post> createGroupPost(@RequestParam("file") MultipartFile file, @PathVariable Long groupId, @RequestPart("post") Post post) {
+        try {
+            User user = userService.getCurrentUser();
+            Group group = groupService.getGroupById(groupId);
+            if (group != null) {
+                Post createdPost = postService.createGroupPost(group, post, user, file);
+                return ResponseEntity.ok(createdPost);
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+        return null;
     }
 
     @GetMapping("/posts")
@@ -78,9 +86,9 @@ public class PostController {
     }
 
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<Void> updatePost(@PathVariable Long postId, @RequestBody String updatedContent) {
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId, @RequestBody Post updatedPost) {
         User user = userService.getCurrentUser();
-        postService.updatePost(postId, updatedContent, user);
+        postService.updatePost(postId, updatedPost.getTitle(), updatedPost.getContent(), user);
         return ResponseEntity.ok().build();
     }
 
@@ -261,5 +269,44 @@ public class PostController {
     public ResponseEntity<List<Comment>> getRepliesForComment(@PathVariable Long commentId) {
         List<Comment> replies = commentService.getRepliesForComment(commentId);
         return ResponseEntity.ok(replies);
+    }
+
+    @GetMapping("/posts/searchByTitle")
+    public ResponseEntity<List<PostIndex>> searchPostsByTitle(@RequestParam String title) {
+        List<PostIndex> posts = postIndexService.searchPostsByTitle(title);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/posts/searchByFullContent")
+    public ResponseEntity<List<PostIndex>> searchPostsByFullContent(@RequestParam String content) {
+        List<PostIndex> posts = postIndexService.searchPostsByFullContent(content);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/posts/searchByFileContent")
+    public ResponseEntity<List<PostIndex>> searchPostsByFileContent(@RequestParam String fileContent) {
+        List<PostIndex> posts = postIndexService.searchPostsByFileContent(fileContent);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/posts/searchByCommentContent")
+    public ResponseEntity<List<PostIndex>> searchPostsByCommentContent(@RequestParam String commentContent) {
+        List<PostIndex> posts = postIndexService.searchPostsByCommentContent(commentContent);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/posts/search/simple")
+    public ResponseEntity<Page<PostIndex>> simpleSearch(@RequestParam String query, @RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<String> keywords = Arrays.asList(query.split("\\s+"));
+        Page<PostIndex> posts = searchService.simpleSearch(keywords, pageable);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/posts/search/advanced")
+    public ResponseEntity<Page<PostIndex>> advancedSearch(@RequestParam List<String> expression, @RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostIndex> posts = searchService.advancedSearch(expression, pageable);
+        return ResponseEntity.ok(posts);
     }
 }

@@ -1,11 +1,13 @@
-<app-search-posts></app-search-posts>
+<app-search-posts (searchResults)="onSearchResults($event)"></app-search-posts>
+<div *ngIf="!showSearchResults">
 <div class="post-card">
   <div class="post-header">
     <h2>Novi post</h2>
   </div>
   <div class="create-post-content">
-    <textarea [(ngModel)]="newPostContent" placeholder="Napišite novi post"></textarea>
-    <input type="file" (change)="onFileSelected($event)" multiple />
+    <input id="titlePost" type="text" [(ngModel)]="newPostTitle" placeholder="Naslov objave">
+    <textarea [(ngModel)]="newPostContent" placeholder="Tekst objave"></textarea>
+    <input id="filePost" type="file" (change)="onFileSelected($event)" multiple />
   </div>
   <div class="post-actions">
     <button id="btnObjavi" (click)="createPost()">Objavi</button>
@@ -23,6 +25,10 @@
       <button id="btnOtkazi" (click)="cancelEditing(post)">Otkaži</button>
       <button id="btnPotvrdi" (click)="updatePost(post.id, post)">Potvrdi</button>
     </ng-container>
+  </div>
+  <div class="title-content">
+    <h2 id="title" *ngIf="!post.isEditing">{{ post.title }}</h2>
+    <input type="text" id="editTitle" *ngIf="post.isEditing" [(ngModel)]="post.updatedTitle"/>
   </div>
   <div class="post-content">
     <p id="content" *ngIf="!post.isEditing">{{ post.content }}</p>
@@ -166,4 +172,12 @@
       <button id="btnAddComment" type="submit">Dodaj komentar</button>
     </form>
   </div>  
+</div>
+</div>
+
+<div *ngIf="showSearchResults">
+  <div *ngFor="let result of searchResults" class="post">
+    <h3>{{ result.title }}</h3>
+    <p [innerHTML]="result.fullContent"></p>
+  </div>
 </div>

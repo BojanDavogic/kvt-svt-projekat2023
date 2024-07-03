@@ -1,9 +1,9 @@
 package ftn.drustvenamreza_back.service.implementation;
 
-import ftn.drustvenamreza_back.indexrepository.GroupElasticsearch;
-import ftn.drustvenamreza_back.model.dto.GroupDTO;
+import ftn.drustvenamreza_back.indexmodel.GroupIndex;
+import ftn.drustvenamreza_back.indexservice.GroupIndexService;
 import ftn.drustvenamreza_back.model.entity.*;
-import ftn.drustvenamreza_back.indexrepository.GroupElasticsearchRepository;
+import ftn.drustvenamreza_back.repository.GroupAdminRepository;
 import ftn.drustvenamreza_back.repository.GroupRepository;
 import ftn.drustvenamreza_back.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
-    private final GroupElasticsearchRepository groupElasticsearchRepository;
+    private final GroupAdminRepository groupAdminRepository;
+    private final GroupIndexService groupIndexService;
+    private final MinioServiceImpl minioService;
 
     public List<Group> getAllGroups() {
         return groupRepository.findByIsDeletedFalse();
@@ -25,13 +27,21 @@ public class GroupServiceImpl implements GroupService {
     public Group createGroup(Group group, User creator) {
         group.setCreationDate(LocalDateTime.now());
         Group savedGroup = groupRepository.save(group);
+        addGroupAdmin(savedGroup, creator);
 
-        // Indeksiraj grupu u Elasticsearch
-        GroupElasticsearch groupElasticsearch = new GroupElasticsearch();
-        groupElasticsearch.setId(savedGroup.getId());
-        groupElasticsearch.setName(savedGroup.getName());
-        groupElasticsearch.setDescription(savedGroup.getDescription());
-        groupElasticsearchRepository.save(groupElasticsearch);
+        GroupIndex groupIndex = new GroupIndex();
+        groupIndex.setId(group.getId());
+        groupIndex.setName(group.getName());
+        groupIndex.setDescription(group.getDescription());
+        groupIndex.setRules(group.getRules());
+
+        Long numberOfPosts = groupIndexService.calculateNumberOfPosts(savedGroup.getId());
+        groupIndex.setNumberOfPosts(numberOfPosts);
+
+        Double averageLikes = groupIndexService.calculateAverageLikes(savedGroup.getId());
+        groupIndex.setAverageLikes(averageLikes);
+
+        groupIndexService.indexGroup(groupIndex);
 
         return savedGroup;
     }
@@ -60,10 +70,11 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(group);
     }
 
-    public Group updateGroup(Long groupId, GroupDTO updatedGroup) {
+    public Group updateGroup(Long groupId, Group updatedGroup) {
         Group existingGroup = getGroupById(groupId);
         existingGroup.setName(updatedGroup.getName());
         existingGroup.setDescription(updatedGroup.getDescription());
+        existingGroup.setRules(updatedGroup.getRules());
         return groupRepository.save(existingGroup);
     }
 
@@ -71,13 +82,17 @@ public class GroupServiceImpl implements GroupService {
         Group group = getGroupById(groupId);
         group.setIsDeleted(true);
         groupRepository.save(group);
+        groupIndexService.deleteGroupIndex(groupId);
     }
 
     public void removeGroupAdmin(Group group, User admin) {
-        GroupAdmin groupAdmin = findGroupAdmin(group, admin);
-        if (groupAdmin != null) {
-            removeGroupAdmin(group, admin);
-            // ...
+        List<GroupAdmin> groupAdmins = groupAdminRepository.findByGroupAndIsDeletedFalse(group);
+        for (GroupAdmin groupAdmin : groupAdmins) {
+            if (groupAdmin.getUser().equals(admin)) {
+                groupAdmin.setIsDeleted(true);
+                groupAdminRepository.save(groupAdmin);
+                break;
+            }
         }
     }
 
@@ -90,10 +105,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public void addGroupAdmin(Group group, User admin) {
-//        if (group.getGroupAdmins() == null) {
-//            group.setGroupAdmins(new ArrayList<>());
-//        }
-//        GroupAdmin groupAdmin = new GroupAdmin(admin);
-//        group.getGroupAdmins().add(groupAdmin);
+        GroupAdmin groupAdmin = new GroupAdmin(admin);
+        groupAdmin.setGroup(group);
+        groupAdminRepository.save(groupAdmin);
     }
 }

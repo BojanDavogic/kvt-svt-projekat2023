@@ -1,29 +1,24 @@
 package ftn.drustvenamreza_back.service.implementation;
 
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
+import ftn.drustvenamreza_back.indexservice.GroupIndexService;
 import ftn.drustvenamreza_back.indexservice.PostIndexService;
-import ftn.drustvenamreza_back.model.entity.Comment;
-import ftn.drustvenamreza_back.model.entity.Reaction;
-import ftn.drustvenamreza_back.model.entity.ReactionType;
-import ftn.drustvenamreza_back.model.entity.User;
+import ftn.drustvenamreza_back.model.entity.*;
 import ftn.drustvenamreza_back.repository.ReactionRepository;
 import ftn.drustvenamreza_back.service.ReactionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 public class ReactionServiceImpl implements ReactionService {
     private final ReactionRepository reactionRepository;
     private final CommentServiceImpl commentService;
     private final PostIndexService postIndexService;
-
-    public ReactionServiceImpl(ReactionRepository reactionRepository, CommentServiceImpl commentService, PostIndexService postIndexService) {
-        this.reactionRepository = reactionRepository;
-        this.commentService = commentService;
-        this.postIndexService = postIndexService;
-    }
+    private final PostServiceImpl postService;
 
     @Override
     public Reaction addReactionForPost(Long postId, Reaction reaction, User user) {
@@ -32,7 +27,7 @@ public class ReactionServiceImpl implements ReactionService {
         return addedReaction;
     }
 
-    private Long calculateLikes(List<Reaction> reactions) {
+    public Long calculateLikes(List<Reaction> reactions) {
         return reactions.stream()
                 .mapToLong(reaction -> {
                     switch (reaction.getType()) {
@@ -62,7 +57,17 @@ public class ReactionServiceImpl implements ReactionService {
 
             postIndexService.updatePostIndex(existingPostIndex);
         }
+
         return reactions;
+    }
+
+    public List<Reaction> getReactionsForGroup(Long groupId) {
+        List<Post> posts = postService.getAllPostsWithGroup(groupId);
+        List<Reaction> allReactions = new ArrayList<>();
+        for (Post post : posts) {
+            allReactions.addAll(getReactionsForPost(post.getId()));
+        }
+        return allReactions;
     }
 
     @Override

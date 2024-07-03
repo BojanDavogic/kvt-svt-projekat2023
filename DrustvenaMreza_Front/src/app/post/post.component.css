@@ -20,6 +20,22 @@
   text-align: center;
 }
 
+#titlePost {
+  width: 99%;
+  height: 20px;
+  color: black;
+  margin-bottom: 10px;
+}
+
+#title {
+  margin-bottom: 10px;
+}
+
+#editTitle {
+  color: black;
+  margin-bottom: 10px;
+}
+
 .create-post-content textarea {
   width: 99%;
   height: 100px;
@@ -103,7 +119,7 @@
   #btnObrisi {
     position: absolute;
     right: 0;
-    top: 200px;
+    top: 220px;
     margin-top: 30px;
     margin: 10px;
     color: white;

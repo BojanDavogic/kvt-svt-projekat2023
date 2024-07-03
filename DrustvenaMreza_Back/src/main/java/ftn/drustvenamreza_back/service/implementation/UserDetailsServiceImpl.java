@@ -1,6 +1,7 @@
-package ftn.drustvenamreza_back.service;
+package ftn.drustvenamreza_back.service.implementation;
 
 import ftn.drustvenamreza_back.model.entity.User;
+import ftn.drustvenamreza_back.service.UserService;
 import ftn.drustvenamreza_back.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;

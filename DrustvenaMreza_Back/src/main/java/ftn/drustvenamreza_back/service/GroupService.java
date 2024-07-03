@@ -18,6 +18,6 @@ public interface GroupService {
     void removePostFromGroup(Post post, Group group);
     List<Post> getGroupPosts(Long groupId);
     void suspendGroup(Long groupId, String reason);
-    Group updateGroup(Long groupId, GroupDTO updatedGroup);
+    Group updateGroup(Long groupId, Group updatedGroup);
     void deleteGroup(Long groupId);
 }

@@ -29,14 +29,20 @@ export class PostService {
     return this.http.post<Post>(this.apiUrl, formData, { headers: this.headers.delete('Content-Type') });
   }
 
-  createGroupPost(groupId: number, post: Post): Observable<Post> {
+  createGroupPost(groupId: number, post: Post, file: File | null): Observable<Post> {
     const url = `${this.apiUrlGroup}/${groupId}/posts`;
-    return this.http.post<Post>(url, post, { headers: this.headers });
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+    formData.append('post', new Blob([JSON.stringify(post)], { type: 'application/json' }));
+    return this.http.post<Post>(url, formData, { headers: this.headers.delete('Content-Type') });
   }
 
-  updatePost(postId: number, postContent: string): Observable<Post> {
+  updatePost(postId: number, postTitle: string, postContent: string): Observable<Post> {
     const url = `${this.apiUrl}/${postId}`;
-    return this.http.put<Post>(url, postContent, { headers: this.headers });
+    const body = { title: postTitle, content: postContent };
+    return this.http.put<Post>(url, body, { headers: this.headers });
   }
 
   deletePost(postId: number): Observable<void> {
@@ -128,6 +134,12 @@ export class PostService {
   getRepliesForComment(commentId: number): Observable<Comment[]> {
     const url = `${this.apiUrl}/comments/${commentId}/replies`;
     return this.http.get<Comment[]>(url, { headers: this.headers });
+  }
+
+  // search
+
+  searchPosts(query: string): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/searchByTitle`, { params: { q: query }, headers: this.headers});
   }
 
 }

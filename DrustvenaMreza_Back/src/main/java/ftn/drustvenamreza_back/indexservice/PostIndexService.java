@@ -3,17 +3,17 @@ package ftn.drustvenamreza_back.indexservice;
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
 import ftn.drustvenamreza_back.indexrepository.PostIndexRepository;
 import ftn.drustvenamreza_back.model.entity.Post;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 public class PostIndexService {
     private final PostIndexRepository postIndexRepository;
-
-    public PostIndexService(PostIndexRepository postIndexRepository) {
-        this.postIndexRepository = postIndexRepository;
-    }
+    private final ElasticsearchOperations elasticsearchTemplate;
 
     public void indexPost(PostIndex postIndex) {
         postIndexRepository.save(postIndex);
@@ -26,6 +26,22 @@ public class PostIndexService {
     public Optional<PostIndex> findById(String postId) {
         Optional<PostIndex> findedPost = postIndexRepository.findPostIndexById(postId);
         return findedPost;
+    }
+
+    public List<PostIndex> searchPostsByTitle(String title) {
+        return postIndexRepository.findByTitleContaining(title);
+    }
+
+    public List<PostIndex> searchPostsByFullContent(String content) {
+        return postIndexRepository.findByFullContentContaining(content);
+    }
+
+    public List<PostIndex> searchPostsByFileContent(String fileContent) {
+        return postIndexRepository.findByFileContentContaining(fileContent);
+    }
+
+    public List<PostIndex> searchPostsByCommentContent(String commentContent) {
+        return postIndexRepository.findByCommentContentContaining(commentContent);
     }
 
     public void updatePostIndex(PostIndex postIndex) {

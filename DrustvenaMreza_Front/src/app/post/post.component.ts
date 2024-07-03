@@ -16,6 +16,7 @@ export class PostComponent implements OnInit {
 
   posts: Post[] = [];
   comments: Comment[] = [];
+  newPostTitle: string = '';
   newPostContent: string = '';
   commentInput: string = '';
   currentUser!: User | null;
@@ -24,6 +25,12 @@ export class PostComponent implements OnInit {
   replyInput: any;
   replies: any;
   selectedFile: File | null = null;
+
+  searchQuery: string = '';
+
+  searchResults: any[] = [];
+  showSearchResults: boolean = false;
+
 
   constructor(private postService: PostService, private authService: AuthService) {}
 
@@ -49,11 +56,13 @@ export class PostComponent implements OnInit {
     }
 
     const newPost: Post = {
+      title: this.newPostTitle,
       content: this.newPostContent,
       comments: [],
       isEditing: false,
       isUpdating: false,
       showComments: false,
+      updatedTitle: '',
       updatedContent: '',
       reactions: [],
       selectedReactions: []
@@ -61,7 +70,7 @@ export class PostComponent implements OnInit {
 
     let createPostRequest: Observable<Post>;
     if (this.group) {
-      createPostRequest = this.postService.createGroupPost(this.group.id, newPost);
+      createPostRequest = this.postService.createGroupPost(this.group.id, newPost, this.selectedFile);
     } else {
       createPostRequest = this.postService.createPost(newPost, this.selectedFile);
     }
@@ -70,6 +79,7 @@ export class PostComponent implements OnInit {
       createdPost => {
         this.posts.push(createdPost);
         this.loadPosts();
+        this.newPostTitle = '';
         this.newPostContent = '';
         this.selectedFile = null;
       },
@@ -112,8 +122,20 @@ export class PostComponent implements OnInit {
     );
   }
 
+  searchPosts(): void {
+    this.postService.searchPosts(this.searchQuery).subscribe(posts => {
+      this.posts = posts;
+    });
+  }
+
+  onSearchResults(results: any[]): void {
+    this.searchResults = results;
+    this.showSearchResults = results.length > 0;
+  }
+
   startEditing(post: Post) {
     post.isEditing = true;
+    post.updatedTitle = post.title;
     post.updatedContent = post.content;
   }
 
@@ -131,17 +153,21 @@ export class PostComponent implements OnInit {
     if (!post.updatedContent.trim()) {
       return;
     }
-
+    if (!post.updatedTitle.trim()) {
+      return;
+    }
+    post.title = post.updatedTitle;
     post.content = post.updatedContent;
     post.isEditing = false;
     post.isUpdating = true;
 
-    this.postService.updatePost(postId, post.content).subscribe(
+    this.postService.updatePost(postId, post.title, post.content).subscribe(
       updatedPost => {
         post.isUpdating = false;
       },
       error => {
         console.error('Greška prilikom ažuriranja posta:', error);
+        post.title = post.updatedTitle;
         post.content = post.updatedContent;
         
         post.isEditing = true;

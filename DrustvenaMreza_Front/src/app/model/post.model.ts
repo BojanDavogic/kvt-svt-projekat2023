@@ -5,9 +5,11 @@ export interface Post {
     id?: any;
     postedBy?: User;
     creationDate?: Date;
+    title: string;
     content: string;
     isDeleted?: boolean;
     isEditing: boolean;
+    updatedTitle: string;
     updatedContent: string;
     isUpdating: boolean;
     showComments: boolean;

@@ -1,6 +1,6 @@
 package ftn.drustvenamreza_back.security;
 
-import ftn.drustvenamreza_back.service.UserDetailsServiceImpl;
+import ftn.drustvenamreza_back.service.implementation.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
