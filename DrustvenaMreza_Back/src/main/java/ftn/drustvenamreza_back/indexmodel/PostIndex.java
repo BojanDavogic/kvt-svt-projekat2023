@@ -20,19 +20,19 @@ public class PostIndex {
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text, store = true, name = "title")
+    @Field(type = FieldType.Text, store = true, name = "title", analyzer = "serbian")
     private String title;
 
-    @Field(type = FieldType.Text, store = true, name = "full_content")
+    @Field(type = FieldType.Text, store = true, name = "full_content", analyzer = "serbian")
     private String fullContent;
 
-    @Field(type = FieldType.Text, store = true, name = "file_content")
+    @Field(type = FieldType.Text, store = true, name = "file_content", analyzer = "serbian")
     private String fileContent;
 
-    @Field(type = FieldType.Long, store = true, name = "number_of_likes")
+    @Field(type = FieldType.Long, store = true, name = "number_of_likes", analyzer = "serbian")
     private Long numberOfLikes;
 
-    @Field(type = FieldType.Text, store = true, name = "comment_content")
+    @Field(type = FieldType.Text, store = true, name = "comment_content", analyzer = "serbian")
     private String commentContent;
 }
 

@@ -24,6 +24,8 @@ export class SearchPostsComponent implements OnDestroy {
       comments: [''],
       likesMin: [''],
       likesMax: [''],
+      commentMin:[''],
+      commentMax:[''],
       page: ['0'],
       size: ['10']
     });
@@ -50,17 +52,17 @@ export class SearchPostsComponent implements OnDestroy {
   }
 
   clearFields() {
-    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax'];
+    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax', 'commentMin', 'commentMax'];
     fields.forEach(field => this.searchForm.get(field)?.setValue(''));
   }
 
   clearAdvancedFields() {
-    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax'];
+    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax', 'commentMin', 'commentMax'];
     fields.forEach(field => this.searchForm.get(field)?.disable());
   }
 
   enableAllFields() {
-    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax'];
+    const fields = ['title', 'text', 'pdfContent', 'comments', 'likesMin', 'likesMax', 'commentMin', 'commentMax'];
     fields.forEach(field => this.searchForm.get(field)?.enable());
   }
 
@@ -73,8 +75,35 @@ export class SearchPostsComponent implements OnDestroy {
     const searchParams = this.searchForm.value;
     if (searchParams.type === 'simple') {
       const simpleField = searchParams.simpleField;
-      const query = searchParams[simpleField];
-      const params = { query, page: searchParams.page, size: searchParams.size };
+      let params: any = {};
+  
+      if (simpleField === 'likes') {
+        const minLikes = searchParams.likesMin;
+        const maxLikes = searchParams.likesMax;
+  
+        if (minLikes && maxLikes) {
+          params = {
+            query: `${minLikes}-${maxLikes}`
+          };
+        } else if (minLikes) {
+          params = {
+            query: `${minLikes}`
+          };
+        } else if (maxLikes) {
+          params = {
+            query: `${maxLikes}`
+          };
+        } else {
+          params = {
+            query: ''
+          };
+        }
+      } else {
+        params = {
+          query: searchParams[simpleField]
+        };
+      }
+  
       this.searchService.simpleSearchPosts(params).subscribe((data: any) => {
         const results = data.content || data;
         this.searchResults.emit(results);

@@ -1,7 +1,9 @@
 package ftn.drustvenamreza_back.controller;
 
 import ftn.drustvenamreza_back.config.NotFoundException;
+import ftn.drustvenamreza_back.indexmodel.GroupIndex;
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
+import ftn.drustvenamreza_back.indexservice.GroupIndexService;
 import ftn.drustvenamreza_back.indexservice.IndexingServiceImpl;
 import ftn.drustvenamreza_back.indexservice.PostIndexService;
 import ftn.drustvenamreza_back.indexservice.SearchServiceImpl;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,6 +35,7 @@ public class PostController {
     private final PostIndexService postIndexService;
     private final IndexingServiceImpl indexingService;
     private final SearchServiceImpl searchService;
+    private final GroupIndexService groupIndexService;
 
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> createPost(@RequestParam("file") MultipartFile file, @RequestPart("post") Post post) {
@@ -46,13 +50,22 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "/groups/{groupId}/posts", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/groups/{groupId}/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> createGroupPost(@RequestParam("file") MultipartFile file, @PathVariable Long groupId, @RequestPart("post") Post post) {
         try {
             User user = userService.getCurrentUser();
             Group group = groupService.getGroupById(groupId);
             if (group != null) {
                 Post createdPost = postService.createGroupPost(group, post, user, file);
+                indexingService.indexPost(file, createdPost.getId());
+                Optional<GroupIndex> existingGroupIndexOptional = groupIndexService.findById(group.getId().toString());
+                if (existingGroupIndexOptional.isPresent()) {
+                    GroupIndex existingGroupIndex = existingGroupIndexOptional.get();
+
+                    existingGroupIndex.setNumberOfPosts(groupIndexService.calculateNumberOfPosts(group.getId()));
+                    groupIndexService.updateGroupIndex(existingGroupIndex);
+                }
+
                 return ResponseEntity.ok(createdPost);
             }
         }catch(Exception e) {
@@ -149,18 +162,6 @@ public class PostController {
         User currentUser = userService.getCurrentUser();
         Post post = postService.getPostById(postId);
 
-        boolean userHasReaction = reactionService.hasUserReaction(postId, currentUser.getId());
-
-        if (userHasReaction) {
-
-            Reaction existingReaction = reactionService.getUserReaction(postId, currentUser.getId());
-
-            existingReaction.setType(ReactionType.valueOf(reactionRequest));
-            existingReaction.setTimestamp(LocalDate.now());
-            Reaction updatedReaction = updateReaction(existingReaction.getId(), reactionRequest).getBody();
-            return ResponseEntity.ok(updatedReaction);
-        } else {
-
             Reaction reaction = new Reaction();
             ReactionType reactionType = ReactionType.valueOf(reactionRequest);
 
@@ -170,8 +171,27 @@ public class PostController {
             reaction.setPost(post);
 
             Reaction createdReaction = reactionService.addReactionForPost(postId, reaction, currentUser);
+            if(post.getGroup() != null) {
+                Optional<GroupIndex> existingGroupIndexOptional = groupIndexService.findById(post.getGroup().getId().toString());
+                if (existingGroupIndexOptional.isPresent()) {
+                    GroupIndex existingGroupIndex = existingGroupIndexOptional.get();
+
+                    existingGroupIndex.setAverageLikes(groupIndexService.calculateAverageLikes(post.getGroup().getId()));
+
+                    groupIndexService.updateGroupIndex(existingGroupIndex);
+                }
+            } else {
+                Optional<PostIndex> existingPostIndexOptional = postIndexService.findById(post.getId().toString());
+                if (existingPostIndexOptional.isPresent()) {
+                    PostIndex existingPostIndex = existingPostIndexOptional.get();
+
+                    existingPostIndex.setNumberOfLikes(reactionService.getTotalLikesForPost(createdReaction.getPost().getId()));
+
+                    postIndexService.updatePostIndex(existingPostIndex);
+                }
+            }
+
             return ResponseEntity.ok(createdReaction);
-        }
     }
 
 
@@ -184,7 +204,29 @@ public class PostController {
     @PutMapping("/posts/reactions/{reactionId}")
     public ResponseEntity<Reaction> updateReaction(@PathVariable Long reactionId, @RequestBody String updatedReaction) {
         Reaction reaction = reactionService.updateReaction(reactionId, updatedReaction);
+        Post post = reaction.getPost();
         if (reaction != null) {
+
+            if(post.getGroup() != null) {
+                Optional<GroupIndex> existingGroupIndexOptional = groupIndexService.findById(post.getGroup().getId().toString());
+                if (existingGroupIndexOptional.isPresent()) {
+                    GroupIndex existingGroupIndex = existingGroupIndexOptional.get();
+
+                    existingGroupIndex.setAverageLikes(groupIndexService.calculateAverageLikes(post.getGroup().getId()));
+
+                    groupIndexService.updateGroupIndex(existingGroupIndex);
+                }
+            } else {
+                Optional<PostIndex> existingPostIndexOptional = postIndexService.findById(post.getId().toString());
+                if (existingPostIndexOptional.isPresent()) {
+                    PostIndex existingPostIndex = existingPostIndexOptional.get();
+
+                    existingPostIndex.setNumberOfLikes(reactionService.getTotalLikesForPost(reaction.getPost().getId()));
+
+                    postIndexService.updatePostIndex(existingPostIndex);
+                }
+            }
+
             return ResponseEntity.ok(reaction);
         } else {
             return ResponseEntity.notFound().build();
@@ -228,6 +270,15 @@ public class PostController {
             reaction.setComment(comment);
 
             Reaction createdReaction = reactionService.addReactionForComment(commentId, reaction, currentUser);
+
+            Optional<PostIndex> existingPostIndexOptional = postIndexService.findById(createdReaction.getPost().getId().toString());
+            if (existingPostIndexOptional.isPresent()) {
+                PostIndex existingPostIndex = existingPostIndexOptional.get();
+
+                existingPostIndex.setNumberOfLikes(reactionService.getTotalLikesForPost(createdReaction.getPost().getId()));
+
+                postIndexService.updatePostIndex(existingPostIndex);
+            }
             return ResponseEntity.ok(createdReaction);
         }
     }
@@ -242,6 +293,14 @@ public class PostController {
     public ResponseEntity<Reaction> updateCommentReaction(@PathVariable Long commentId, @PathVariable Long reactionId, @RequestBody String updatedReaction) {
         Reaction reaction = reactionService.updateCommentReaction(commentId, reactionId, updatedReaction);
         if (reaction != null) {
+            Optional<PostIndex> existingPostIndexOptional = postIndexService.findById(reaction.getPost().getId().toString());
+            if (existingPostIndexOptional.isPresent()) {
+                PostIndex existingPostIndex = existingPostIndexOptional.get();
+
+                existingPostIndex.setNumberOfLikes(reactionService.getTotalLikesForPost(reaction.getPost().getId()));
+
+                postIndexService.updatePostIndex(existingPostIndex);
+            }
             return ResponseEntity.ok(reaction);
         } else {
             return ResponseEntity.notFound().build();

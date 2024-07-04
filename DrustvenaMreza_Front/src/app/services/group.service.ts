@@ -21,14 +21,23 @@ export class GroupService {
   }
   
 
-  createGroup(group: Group): Observable<Group> {
-    return this.http.post<Group>(this.apiUrl, group, { headers: this.headers });
+  createGroup(group: Group, file: File): Observable<Group> {
+    const formData = new FormData();
+    formData.append('group', new Blob([JSON.stringify(group)], { type: 'application/json' }));
+    formData.append('file', file);
+    
+    return this.http.post<Group>(this.apiUrl, formData, { headers: this.headers.delete('Content-Type') });
   }
   
 
   updateGroup(groupId: number, group: Group): Observable<Group> {
     const url = `${this.apiUrl}/${groupId}`;
     return this.http.put<Group>(url, group, { headers: this.headers });
+  }
+
+  updateGroupRules(groupId: number, rules: string): Observable<Group> {
+    const url = `${this.apiUrl}/${groupId}/updateRules`;
+    return this.http.put<Group>(url, rules, { headers: this.headers });
   }
   
 
@@ -40,10 +49,6 @@ export class GroupService {
 
   getAllGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(this.apiUrl, { headers: this.headers });
-  }
-  
-  searchGroups(searchTerm: string): Observable<Group[]> {
-    return this.http.get<Group[]>(`${this.apiUrl}/search?term=${searchTerm}`, { headers: this.headers });
-  }  
+  } 
   
 }

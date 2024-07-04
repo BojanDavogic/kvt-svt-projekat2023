@@ -6,6 +6,7 @@ export interface Group {
   id?: any;
   name: string;
   description: string;
+  rules?: string;
   creationDate?: Date;
   isSuspended: boolean;
   suspendedReason: string;

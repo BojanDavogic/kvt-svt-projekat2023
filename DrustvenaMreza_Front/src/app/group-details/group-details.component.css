@@ -26,3 +26,15 @@
   text-align: left;
 }
 
+.rules-action {
+    margin-top: 10px;
+}
+
+.add-rules {
+    background-color: transparent;
+    color: aqua;
+    padding: 5px;
+    cursor: pointer;
+    border: 2px solid aqua;
+    border-radius: 5px;
+}

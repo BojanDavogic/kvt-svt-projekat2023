@@ -1,19 +1,24 @@
 <div class="popup-overlay">
-    <div class="popup-content">
-      <h3>Dodaj grupu</h3>
-      <form>
-        <div class="form-group">
-          <label for="name">Naziv grupe:</label>
-          <input type="text" id="name" name="name" [(ngModel)]="groupName" required>
-        </div>
-        <div class="form-group">
-          <label for="description">Opis grupe:</label>
-          <textarea id="description" name="description" [(ngModel)]="groupDescription" required></textarea>
-        </div>
-        <div class="form-actions">
-          <button id="btnDodaj" type="button" (click)="addGroup()">Dodaj</button>
-          <button id="btnOtkazi" type="button" (click)="closePopup()">Otkaži</button>
-        </div>
-      </form>
-    </div>
+  <div class="popup-content">
+    <h3>Dodaj grupu</h3>
+    <form>
+      <div class="form-group">
+        <label for="name">Naziv grupe:</label>
+        <input type="text" id="name" name="name" [(ngModel)]="groupName" required>
+      </div>
+      <div class="form-group">
+        <label for="description">Opis grupe:</label>
+        <textarea id="description" name="description" [(ngModel)]="groupDescription" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file">Dodaj PDF:</label>
+        <input type="file" id="file" name="file" (change)="onFileSelected($event)" multiple>
+      </div>
+      <div class="form-actions">
+        <button id="btnDodaj" type="button" (click)="addGroup()">Dodaj</button>
+        <button id="btnOtkazi" type="button" (click)="closePopup()">Otkaži</button>
+      </div>
+    </form>
   </div>
+</div>
+

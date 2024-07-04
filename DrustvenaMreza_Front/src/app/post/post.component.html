@@ -175,9 +175,10 @@
 </div>
 </div>
 
-<div *ngIf="showSearchResults">
+<div class="container" *ngIf="showSearchResults">
   <div *ngFor="let result of searchResults" class="post">
     <h3>{{ result.title }}</h3>
     <p [innerHTML]="result.fullContent"></p>
   </div>
+  <button class="close-search" (click)="closeSearch()">Zatvori pretragu</button>
 </div>

@@ -1,11 +1,8 @@
-import { Component, Output,EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { GroupService } from '../services/group.service';
-import { GroupListComponent } from '../group-list/group-list.component';
 import { Group } from '../model/group.model';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { DatePipe } from '@angular/common';
-
 
 @Component({
   selector: 'app-new-group-popup',
@@ -20,12 +17,21 @@ export class NewGroupPopupComponent {
   groupSuspendedReason: string;
   groupIsDeleted: boolean;
   groups: Group[] = [];
-
+  selectedFile: File | null = null;
 
   @Output() groupAdded = new EventEmitter<Group>();
   @Output() popupClosed = new EventEmitter();
 
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   addGroup() {
+    if (!this.selectedFile) {
+      alert('Morate odabrati PDF fajl.');
+      return;
+    }
+
     const newGroup: Group = {
       name: this.groupName,
       description: this.groupDescription,
@@ -33,10 +39,8 @@ export class NewGroupPopupComponent {
       suspendedReason: this.groupSuspendedReason,
       isDeleted: this.groupIsDeleted
     };
-  
-    const headers = this.authService.getAuthenticatedHeaders();
-  
-    this.http.post<Group>('http://localhost:8080/groups', newGroup, { headers })
+
+    this.groupService.createGroup(newGroup, this.selectedFile)
       .subscribe(
         (response) => {
           console.log('Grupa uspešno dodata:', response);
@@ -48,13 +52,12 @@ export class NewGroupPopupComponent {
         }
       );
   }
-   
 
   closePopup() {
     this.popupClosed.emit();
   }
 
-  constructor(private http: HttpClient, private groupService: GroupService, private authService: AuthService, private datePipe: DatePipe){
+  constructor(private groupService: GroupService, private authService: AuthService, private datePipe: DatePipe) {
     const currentDate = new Date();
 
     this.groupName = '';
@@ -78,6 +81,4 @@ export class NewGroupPopupComponent {
       }
     );
   }
-  
-  
 }

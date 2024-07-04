@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.indexmodel.GroupIndex;
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
 import ftn.drustvenamreza_back.indexservice.GroupIndexService;
 import ftn.drustvenamreza_back.indexservice.PostIndexService;
@@ -76,7 +77,14 @@ public class PostServiceImpl implements PostService {
         postIndex.setCommentContent("");
         postIndexService.indexPost(postIndex);
 
-//        groupIndexService.updateGroupIndexStatistics(group.getId());
+//        Optional<GroupIndex> existingGroupIndexOptional = groupIndexService.findById(group.getId().toString());
+//        if (existingGroupIndexOptional.isPresent()) {
+//            GroupIndex existingGroupIndex = existingGroupIndexOptional.get();
+//
+//            existingGroupIndex.setNumberOfPosts(groupIndexService.calculateNumberOfPosts(group.getId()));
+//
+//            groupIndexService.updateGroupIndex(existingGroupIndex);
+//        }
 
         return savedPost;
     }

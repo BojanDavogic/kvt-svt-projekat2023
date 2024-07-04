@@ -43,13 +43,21 @@ export class PostComponent implements OnInit {
     this.selectedFile = event.target.files[0];
   }
 
+  closeSearch(){
+    this.showSearchResults = false;
+  }
+
   createPost() {
     if (!this.newPostContent.trim()) {
       return;
     }
 
+    if (!this.selectedFile) {
+      alert('Morate odabrati PDF fajl.');
+      return;
+    }
+
     this.currentUser = this.authService.getCurrentUser();
-    console.log(this.currentUser, "ovo je ulogovani korisnik");
     if (!this.currentUser) {
       console.error('Nepoznat ulogovani korisnik.');
       return;

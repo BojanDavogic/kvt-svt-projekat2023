@@ -9,6 +9,8 @@ import ftn.drustvenamreza_back.service.implementation.ReactionServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
@@ -37,9 +39,18 @@ public class GroupIndexService {
 
     public Double calculateAverageLikes(Long groupId) {
         List<Reaction> reactions = reactionService.getReactionsForGroup(groupId);
-        Long totalLikes = reactions.stream().filter(reaction -> reaction.getType().equals("LIKE")).count();
+        Long totalLikes = reactions.stream().filter(reaction -> reaction.getType().toString().equals("LIKE")).count();
+        Long totalDislikesCount = reactions.stream().filter(reaction -> reaction.getType().toString().equals("DISLIKE")).count();
+        Long totalDislikes = totalDislikesCount * (-1);
+        Long totalHeartsCount = reactions.stream().filter(reaction -> reaction.getType().toString().equals("HEART")).count();
+        Long totalHearts = totalHeartsCount * 5;
+        Long totalReactions = totalLikes + totalDislikes + totalHearts;
         Long numberOfPosts = calculateNumberOfPosts(groupId);
-        return numberOfPosts > 0 ? (double) totalLikes / numberOfPosts : 0.0;
+        double avg = numberOfPosts > 0 ? (double) totalReactions / numberOfPosts : 0.0;
+        BigDecimal bd = BigDecimal.valueOf(avg);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+        return bd.doubleValue();
     }
 
     public void updateGroupIndex(GroupIndex groupIndex) {

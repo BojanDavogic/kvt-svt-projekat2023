@@ -24,6 +24,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { ToastrModule } from 'ngx-toastr';
 import { SearchPostsComponent } from './search-posts/search-posts.component';
 import { SearchGroupComponent } from './search-group/search-group.component';
+import { AddRulesComponent } from './add-rules/add-rules.component';
+import { HighlightPipe } from './highlight.pipe';
 
 
 @NgModule({
@@ -42,7 +44,9 @@ import { SearchGroupComponent } from './search-group/search-group.component';
     UserProfileComponent,
     ChangePasswordComponent,
     SearchPostsComponent,
-    SearchGroupComponent
+    SearchGroupComponent,
+    AddRulesComponent,
+    HighlightPipe,
   ],
   imports: [
     BrowserModule,

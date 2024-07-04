@@ -24,9 +24,11 @@ export class GroupDetailsComponent implements OnInit {
   selectedButton: string = '';
   buttonColor: string = 'whitesmoke';
 
+  showPopup: boolean = false;
+
   constructor(private route: ActivatedRoute, private groupService: GroupService, private postService: PostService, private authService: AuthService) {
     this.route.params.subscribe(params => {
-      this.groupId = +params['id']; // Pretvori vrednost u broj
+      this.groupId = +params['id'];
     });
    }
 
@@ -43,8 +45,22 @@ export class GroupDetailsComponent implements OnInit {
       this.groupService.getGroupById(this.groupId).subscribe(data => {
         this.group = data;
       });
-  }
+    }
   }
 
+  addRules(newGroup: Group): void {
+    if (this.group) {
+      this.group.rules = newGroup.rules;
+    }
+    this.closePopup();
+  }
+
+  openPopup() {
+    this.showPopup = true;
+  }
+
+  closePopup() {
+    this.showPopup = false;
+  }
   
 }

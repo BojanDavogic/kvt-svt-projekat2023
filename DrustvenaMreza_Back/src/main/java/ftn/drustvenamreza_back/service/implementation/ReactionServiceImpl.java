@@ -1,5 +1,6 @@
 package ftn.drustvenamreza_back.service.implementation;
 
+import ftn.drustvenamreza_back.indexmodel.GroupIndex;
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
 import ftn.drustvenamreza_back.indexservice.GroupIndexService;
 import ftn.drustvenamreza_back.indexservice.PostIndexService;
@@ -9,6 +10,7 @@ import ftn.drustvenamreza_back.service.ReactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,16 +50,6 @@ public class ReactionServiceImpl implements ReactionService {
     @Override
     public List<Reaction> getReactionsForPost(Long postId) {
         List<Reaction> reactions =  reactionRepository.findByPostIdAndIsDeletedFalse(postId);
-        Long calculatedLikes = calculateLikes(reactions);
-        Optional<PostIndex> existingPostIndexOptional = postIndexService.findById(postId.toString());
-        if (existingPostIndexOptional.isPresent()) {
-            PostIndex existingPostIndex = existingPostIndexOptional.get();
-
-            existingPostIndex.setNumberOfLikes(calculatedLikes);
-
-            postIndexService.updatePostIndex(existingPostIndex);
-        }
-
         return reactions;
     }
 
@@ -84,6 +76,7 @@ public class ReactionServiceImpl implements ReactionService {
     public Reaction updateReaction(Long reactionId, String updatedReaction) {
         Reaction reaction = getReactionById(reactionId);
         reaction.setType(ReactionType.valueOf(updatedReaction));
+        reaction.setTimestamp(LocalDate.now());
         return reactionRepository.save(reaction);
     }
 
@@ -132,5 +125,18 @@ public class ReactionServiceImpl implements ReactionService {
     @Override
     public Reaction getUserCommentReaction(Long commentId, Long userId) {
         return reactionRepository.findByCommentIdAndMadeByIdAndIsDeletedFalse(commentId, userId);
+    }
+
+    public Long getTotalLikesForPost(Long postId) {
+        List<Reaction> postReactions = getReactionsForPost(postId);
+        List<Comment> comments = commentService.getCommentsForPost(postId);
+        long totalLikes = calculateLikes(postReactions);
+
+        for (Comment comment : comments) {
+            List<Reaction> commentReactions = getReactionsForComment(comment.getId());
+            totalLikes += calculateLikes(commentReactions);
+        }
+
+        return totalLikes;
     }
 }

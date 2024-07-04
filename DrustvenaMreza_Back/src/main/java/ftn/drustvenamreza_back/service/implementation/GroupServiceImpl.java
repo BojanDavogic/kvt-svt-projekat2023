@@ -21,7 +21,7 @@ public class GroupServiceImpl implements GroupService {
     private final MinioServiceImpl minioService;
 
     public List<Group> getAllGroups() {
-        return groupRepository.findByIsDeletedFalse();
+        return groupRepository.findGroupByIsDeletedFalse();
     }
 
     public Group createGroup(Group group, User creator) {
@@ -35,10 +35,10 @@ public class GroupServiceImpl implements GroupService {
         groupIndex.setDescription(group.getDescription());
         groupIndex.setRules(group.getRules());
 
-        Long numberOfPosts = groupIndexService.calculateNumberOfPosts(savedGroup.getId());
+        Long numberOfPosts = 0L;
         groupIndex.setNumberOfPosts(numberOfPosts);
 
-        Double averageLikes = groupIndexService.calculateAverageLikes(savedGroup.getId());
+        Double averageLikes = 0.0;
         groupIndex.setAverageLikes(averageLikes);
 
         groupIndexService.indexGroup(groupIndex);
@@ -75,6 +75,12 @@ public class GroupServiceImpl implements GroupService {
         existingGroup.setName(updatedGroup.getName());
         existingGroup.setDescription(updatedGroup.getDescription());
         existingGroup.setRules(updatedGroup.getRules());
+        return groupRepository.save(existingGroup);
+    }
+
+    public Group updateGroupRules(Long groupId, String rules) {
+        Group existingGroup = getGroupById(groupId);
+        existingGroup.setRules(rules);
         return groupRepository.save(existingGroup);
     }
 

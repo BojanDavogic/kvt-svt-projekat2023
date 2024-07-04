@@ -1,10 +1,14 @@
 package ftn.drustvenamreza_back.indexservice;
 
+import ftn.drustvenamreza_back.indexmodel.GroupIndex;
 import ftn.drustvenamreza_back.indexmodel.PostIndex;
+import ftn.drustvenamreza_back.indexrepository.GroupIndexRepository;
 import ftn.drustvenamreza_back.indexrepository.PostIndexRepository;
 import ftn.drustvenamreza_back.model.entity.Comment;
+import ftn.drustvenamreza_back.model.entity.Post;
 import ftn.drustvenamreza_back.model.entity.Reaction;
 import ftn.drustvenamreza_back.repository.CommentRepository;
+import ftn.drustvenamreza_back.repository.GroupRepository;
 import ftn.drustvenamreza_back.repository.PostRepository;
 import ftn.drustvenamreza_back.repository.ReactionRepository;
 import ftn.drustvenamreza_back.service.implementation.MinioServiceImpl;
@@ -26,11 +30,15 @@ import java.util.Objects;
 public class IndexingServiceImpl {
 
     private final PostIndexRepository postIndexRepository;
+    private final GroupIndexRepository groupIndexRepository;
     private final PostRepository postRepository;
+    private final GroupRepository groupRepository;
     private final ReactionRepository reactionRepository;
     private final CommentRepository commentRepository;
     private final MinioServiceImpl minioService;
     private final LanguageDetector languageDetector;
+
+    private final GroupIndexService groupIndexService;
     private final ReactionServiceImpl reactionService;
 
     @Transactional
@@ -63,6 +71,44 @@ public class IndexingServiceImpl {
         postIndex.setCommentContent(commentContent.toString().trim());
 
         postIndexRepository.save(postIndex);
+
+        return serverFilename;
+    }
+
+    @Transactional
+    public String indexGroup(MultipartFile documentFile, Long groupId) throws IOException {
+        var groupIndex = new GroupIndex();
+        var group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group with ID " + groupId + " not found."));
+
+        groupIndex.setName(group.getName());
+        groupIndex.setDescription(group.getDescription());
+        groupIndex.setRules(group.getRules());
+        groupIndex.setId(group.getId());
+
+        var documentContent = extractDocumentContent(documentFile);
+        var detectedLanguage = detectLanguage(documentContent);
+
+        var serverFilename = minioService.uploadFile(documentFile);
+        group.setPdfUrl(serverFilename);
+        groupIndex.setFileContent(documentContent);
+
+        Long numberOfPosts = groupIndexService.calculateNumberOfPosts(groupId);
+        groupIndex.setNumberOfPosts(numberOfPosts);
+
+//        List<Post> posts =  postRepository.findByGroupIdAndIsDeletedFalse(groupId);
+//        Long numberOfPosts = (long) posts.size();
+//        groupIndex.setNumberOfPosts(numberOfPosts);
+
+        Double averageLikes = groupIndexService.calculateAverageLikes(groupId);
+        groupIndex.setAverageLikes(averageLikes);
+
+//        List<Reaction> reactions = reactionService.getReactionsForGroup(groupId);
+//        Long totalLikes = reactions.stream().filter(reaction -> reaction.getType().equals("LIKE")).count();
+//        Double averageLikes = numberOfPosts > 0 ? (double) totalLikes / numberOfPosts : 0.0;
+//        groupIndex.setAverageLikes(averageLikes);
+
+        groupIndexRepository.save(groupIndex);
 
         return serverFilename;
     }

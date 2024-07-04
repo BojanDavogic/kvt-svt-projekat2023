@@ -13,6 +13,9 @@ export class GroupListComponent implements OnInit {
   groups: Group[] = [];
   group: Group | undefined;
 
+  searchResults: any[] = [];
+  showSearchResults: boolean = false;
+
   constructor(private groupService: GroupService) { }
 
   ngOnInit() {
@@ -23,7 +26,6 @@ export class GroupListComponent implements OnInit {
     this.groupService.getAllGroups().subscribe(
       groups => {
         this.groups = groups;
-        console.log(this.groups);
       },
       error => {
         console.error('Greška prilikom preuzimanja grupa:', error);
@@ -31,8 +33,13 @@ export class GroupListComponent implements OnInit {
     );
   }
   
-  updateGroups(groups: Group[]) {
-    this.groups = groups;
+  onSearchResults(results: any[]): void {
+    this.searchResults = results;
+    this.showSearchResults = results.length > 0;
+  }
+
+  closeSearch(){
+    this.showSearchResults = false;
   }
 
   deleteGroup(groupId: number) {
@@ -43,7 +50,6 @@ export class GroupListComponent implements OnInit {
 
   addGroup(newGroup: Group): void {
     this.groups.push(newGroup);
-    console.log('Dodavanje grupe:', newGroup);
   }
 
   showPopup: boolean = false;

@@ -16,6 +16,7 @@
         <option value="text">Tekst</option>
         <option value="pdfContent">PDF sadržaj</option>
         <option value="comments">Komentari</option>
+        <option value="likes">Broj lajkova</option>
       </select>
     </div>
 
@@ -35,6 +36,12 @@
       <label for="comments">Komentari</label>
       <input id="comments" formControlName="comments" type="text">
     </div>
+    <div *ngIf="searchForm.get('type')?.value === 'simple' && searchForm.get('simpleField')?.value === 'likes'">
+      <label for="likesMin">Min. lajkova</label>
+      <input id="likesMin" formControlName="likesMin" type="number" min="0">
+      <label for="likesMax">Max. lajkova</label>
+      <input id="likesMax" formControlName="likesMax" type="number" min="0">
+    </div>
 
     <div *ngIf="searchForm.get('type')?.value === 'advanced'">
       <label for="title">Naslov</label>
@@ -45,10 +52,14 @@
       <input id="pdfContent" formControlName="pdfContent" type="text">
       <label for="comments">Komentari</label>
       <input id="comments" formControlName="comments" type="text">
-      <label for="likesMin">Min. sviđanja</label>
+      <label for="likesMin">Min. lajkova</label>
       <input id="likesMin" formControlName="likesMin" type="number" min="0">
-      <label for="likesMax">Max. sviđanja</label>
+      <label for="likesMax">Max. lajkova</label>
       <input id="likesMax" formControlName="likesMax" type="number" min="0">
+      <label for="commentMin">Min. komentara</label>
+      <input id="commentMin" formControlName="commentMin" type="number" min="0">
+      <label for="commentMax">Max. komentara</label>
+      <input id="commentMax" formControlName="commentMax" type="number" min="0">
     </div>
     
     <button type="submit">Pretraži</button>

@@ -259,3 +259,15 @@
   color: black;
   margin: 10px;
 }
+
+.close-search {
+  display: block;
+  margin: auto;
+  background-color: rgb(166, 26, 26);
+  color: #ffffff;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid black;
+  border-radius: 5px;
+}

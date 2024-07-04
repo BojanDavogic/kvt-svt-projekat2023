@@ -2,8 +2,17 @@
     <div class="group-header">
         <h2 class="group-name">{{ group.name }}</h2>
         <p class="group-description">{{ group.description }}</p>
+        <p class="group-rules"> {{ group.rules }}</p>
+        <div *ngIf="!group.rules" class="rules-action">
+          <button class="add-rules" (click)="openPopup()">Dodaj pravila grupe</button>
+        </div>
     </div>
     <div class="group-body">
-      <app-post [group]="group" />        
+      <app-post [group]="group" />  
     </div>
-  </div>
+</div>
+<app-add-rules
+*ngIf="showPopup"
+[group]="group"
+(rulesAdded)="addRules($event)"
+(popupClosed)="closePopup()"/>

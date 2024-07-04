@@ -1,5 +1,6 @@
 <div class="container">
-  <app-search-group (searchResults)="updateGroups($event)"></app-search-group>
+  <app-search-group (searchResults)="onSearchResults($event)"></app-search-group>
+  <div class="container" *ngIf="!showSearchResults">
     <h1 class="group-header">Sve grupe:</h1>
     <div *ngIf="groups.length === 0" class="no-results">
       Nema rezultata pretrage.
@@ -18,7 +19,8 @@
       </div>
     </div>
   </div>
-  <div class="group-actions">
+  </div>
+  <div *ngIf="!showSearchResults" class="group-actions">
     <button class="add-group-button" (click)="openPopup()">Dodaj novu grupu</button>
   </div> 
   <app-edit-group-popup [group]="this.group" *ngIf="showEditPopup" (popupEditClosed)="closeEditPopup()"/> 
@@ -26,3 +28,18 @@
   *ngIf="showPopup"
   (groupAdded)="addGroup($event)"
   (popupClosed)="closePopup()"/>
+
+  <div class="containerSearch" *ngIf="showSearchResults">
+    <h1>Rezultati pretrage</h1>
+    <div *ngFor="let result of searchResults" class="group-card divSearch">
+      <h2 [innerHTML]="result.name | highlight: searchTerm"></h2><br>
+      <p>Broj objava:</p>
+      <p [innerHTML]="result.numberOfPosts"></p><br>
+      <p>Prosečan broj lajkova:</p>
+      <p [innerHTML]="result.averageLikes"></p>
+      <p>Opis:</p>
+      <p [innerHTML]="result.description | highlight: searchTerm"></p>
+    </div>
+    <button class="close-search" (click)="closeSearch()">Zatvori pretragu</button>
+  </div>
+  

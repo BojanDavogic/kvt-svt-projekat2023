@@ -18,19 +18,19 @@ public class GroupIndex {
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text, store = true, name = "name")
+    @Field(type = FieldType.Text, store = true, name = "name", analyzer = "serbian")
     private String name;
 
-    @Field(type = FieldType.Text, store = true, name = "description")
+    @Field(type = FieldType.Text, store = true, name = "description", analyzer = "serbian")
     private String description;
 
-    @Field(type = FieldType.Text, store = true, name = "file_content")
+    @Field(type = FieldType.Text, store = true, name = "file_content", analyzer = "serbian")
     private String fileContent;
 
     @Field(type = FieldType.Long, store = true, name = "number_of_posts")
     private Long numberOfPosts;
 
-    @Field(type = FieldType.Text, store = true, name = "rules")
+    @Field(type = FieldType.Text, store = true, name = "rules", analyzer = "serbian")
     private String rules;
 
     @Field(type = FieldType.Double, store = true, name = "average_likes")
